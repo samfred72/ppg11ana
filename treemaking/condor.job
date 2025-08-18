@@ -1,0 +1,14 @@
+Executable  = script.sh
+Universe    = vanilla
+notification= Never
+Input       = /dev/null
+Arguments       = $(runnumber) $(range) 
+Initialdir    = /sphenix/user/samfred/run25/ppg11/treemaking/
+Output    = $(Initialdir)/log/$(runnumber).out
+Error     = $(Initialdir)/log/$(runnumber).err
+Log       = tmp/$(runnumber).log
+PeriodicHold  = (NumJobStarts>=1 && JobStatus == 1)
+job_lease_duration = 3600
+
+Queue runnumber, range from runlist.list
+

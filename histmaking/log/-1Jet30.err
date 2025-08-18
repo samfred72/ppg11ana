@@ -1,0 +1,17 @@
+In file included from input_line_8:1:
+In file included from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/truthhistmaker.C:2:
+In file included from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/ana.cxx:2:
+In file included from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/ana.h:10:
+/sphenix/user/jpark4/Utility/Style_jaebeom.h:321:3: warning: expression result unused [-Wunused-value]
+  TH1::SetDefaultSumw2;
+  ^~~~~~~~~~~~~~~~~~~~
+/sphenix/user/jpark4/Utility/Style_jaebeom.h:334:3: warning: expression result unused [-Wunused-value]
+  TH1::SetDefaultSumw2;
+  ^~~~~~~~~~~~~~~~~~~~
+/sphenix/user/jpark4/Utility/Style_jaebeom.h:348:3: warning: expression result unused [-Wunused-value]
+  TH1::SetDefaultSumw2;
+  ^~~~~~~~~~~~~~~~~~~~
+Error in <TUnixSystem::FindDynamicLibrary>: ../Headers/libMyDict.so does not exist in /sphenix/user/samfred/run25/install//lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/lib64:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/binutils/2.40-acaab/x86_64-el9/lib:.:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.1/lib64:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.1/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/utils/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/lib64:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/lhapdf-5.9.1/lib:/usr/local/lib64:/usr/lib64:.:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/lib:/usr/lib64/glibc-hwcaps/x86-64-v4:/usr/lib64/glibc-hwcaps/x86-64-v3:/usr/lib64/glibc-hwcaps/x86-64-v2:/usr/lib64/tls/haswell/avx512_1/x86_64:/usr/lib64/tls/haswell/avx512_1:/usr/lib64/tls/haswell/x86_64:/usr/lib64/tls/haswell:/usr/lib64/tls/avx512_1/x86_64:/usr/lib64/tls/avx512_1:/usr/lib64/tls/x86_64:/usr/lib64/tls:/usr/lib64/haswell/avx512_1/x86_64:/usr/lib64/haswell/avx512_1:/usr/lib64/haswell/x86_64:/usr/lib64/haswell:/usr/lib64/avx512_1/x86_64:/usr/lib64/avx512_1:/usr/lib64/x86_64:/usr/lib64
+Error in <TTree::SetBranchAddress>: unknown branch -> emcal_total_energy
+Error in <TTree::SetBranchAddress>: unknown branch -> ScaledTriggerBit
+Error in <TTree::SetBranchAddress>: unknown branch -> LiveTriggerBit

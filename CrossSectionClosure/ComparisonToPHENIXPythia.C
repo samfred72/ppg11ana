@@ -1,8 +1,8 @@
 #include <iostream>
 #include <RooWorkspace.h>
 #include <cmath>
-#include "../Headers/ana.cxx"
-#include "../Headers/TreeSetting.h"
+#include "/sphenix/user/jpark4/sPHENIX_software/CaloTreeMaker/run/EmcalCluster/NeutralMesonAna/sPHENIX-PPG11Analysis/Analysis/Headers/ana.cxx"
+#include "/sphenix/user/jpark4/sPHENIX_software/CaloTreeMaker/run/EmcalCluster/NeutralMesonAna/sPHENIX-PPG11Analysis/Analysis/Headers/TreeSetting.h"
 #include "/sphenix/user/jpark4/Utility/Style_jaebeom.h"
 #include "/sphenix/user/jpark4/Utility/commonUtility.h"
 
@@ -11,7 +11,7 @@ double GetGraphMaximum(TGraph* graph) {
   return graph ? TMath::MaxElement(graph->GetN(), graph->GetY()) : 0;
 }
 
-void ClosureTestPythia(std::string particle="pi0")
+void ComparisonToPHENIXPythia(std::string particle="pi0")
 {
   gStyle->SetEndErrorSize(0);
   gStyle->SetOptStat(0);
@@ -21,30 +21,28 @@ void ClosureTestPythia(std::string particle="pi0")
   double sPHENIX_posx = anac.sPHENIX_posx;
   double sPHENIX_posy = anac.sPHENIX_posy;
   double posy_diff = anac.posy_diff;
-
-  double truthvz_factors = 2.7916;
+  
+  double truthz_fraction = 2.7916; 
   TFile *f1 = new TFile(Form("/sphenix/user/samfred/run25/ppg11/histmaking/%syields.root",particle.c_str()),"read");
   TH1D  *h1 = (TH1D*) f1->Get(Form("%syields",particle.c_str()));
-  h1->Scale(truthvz_factors);
+  h1->Scale(truthz_fraction);
 
   double lumi = 100*1e6 / 42.0;
   double dy = 2.0;
   double br = (particle=="pi0") ? 0.98823 : 1;
   double norm = 2*M_PI;
 
-  TFile *f2 = new TFile(Form("output/eff_output_noreweight_pythiaMB_%s.root",particle.c_str()),"read");
+  TFile *f2 = new TFile(Form("eff_output_noreweight_pythiaMB_%s.root",particle.c_str()),"read");
   TH1D* h2 = (TH1D*) f2->Get("heff");
   
   std::string fitfilename = (particle == "pi0") ? "fit_pythiamb_cross_section_pi0.root" : "fit_pythiamb_cross_section_tsallis_eta.root";
   TFile *f_fit = new TFile(fitfilename.c_str(),"read");
   TF1* fitw = (TF1*) f_fit->Get("f_pTdNdpt");
   TF1* fit = (TF1*) f_fit->Get("fit_restricted");
-  fit->SetNpx(1000);
-  fit->SetLineColor(kGreen);
 
-  TFile *ft = new TFile(Form("output/hist_truth_noreweight_%s_MB.root",particle.c_str()),"read");
-  TH1D* htruth = (TH1D*) ft->Get("heff_sp_pt_den");
-  htruth->Scale(truthvz_factors);
+  TFile *ft = new TFile(Form("hist_truth_noreweight_%s_MB.root",particle.c_str()),"read");
+  TH1D* htruth = (TH1D*) ft->Get("heff_sp_pt_den_fine");
+  htruth->Scale(truthz_fraction);
 
   TGraphErrors *gr = new TGraphErrors();
   TGraphErrors *grtruth = new TGraphErrors();
@@ -54,7 +52,7 @@ void ClosureTestPythia(std::string particle="pi0")
     float ptlow = h1->GetBinCenter(i) - h1->GetBinWidth(i)/2;
     float pthigh = h1->GetBinCenter(i) + h1->GetBinWidth(i)/2;
     float yield = h1->GetBinContent(i); 
-    if(yield==0) continue;
+    if(yield==0 || i<=2) continue;
     float yielderr = h1->GetBinError(i); 
     float ptpos = (ptlow + pthigh) / 2;
     float dpt = (pthigh-ptlow);
@@ -111,16 +109,15 @@ void ClosureTestPythia(std::string particle="pi0")
   f1->Close();
   
   TGraphAsymmErrors *grphenix; 
-  TFile *filefit = new TFile(Form("../Spectra/cross_section_%s_fit.root",particle.c_str()),"read");
+  TFile *filefit = new TFile(Form("cross_section_%s_fit.root",particle.c_str()),"read");
   TF1 *fitc= (TF1*) filefit->Get("fit");
   fitc->SetNpx(1000);
   fitc->SetLineColor(kRed);
   TGraphErrors *gratio_phenix = new TGraphErrors(); //ratio to phenix
-  TGraphErrors *gratio_truth = new TGraphErrors(); //ratio to truth
-  TGraphErrors *gratio_sphenix = getGraphRatio(gr, grtruth);
+  TGraphErrors *gratio_sphenix = new TGraphErrors();
   TDirectory *dir;
   if(particle=="pi0"){
-    TFile *fphenix = new TFile("../Spectra/OtherExp/PHENIX_pi0_pp.root","read");
+    TFile *fphenix = new TFile("PHENIX_pi0_pp.root","read");
     dir = (TDirectory*) fphenix->Get("Figure 1d-2");
     grphenix = (TGraphAsymmErrors*) dir->Get("Graph1D_y2");
     TH1F* hist_e1= (TH1F*) dir->Get("Hist1D_y2_e1");
@@ -144,9 +141,35 @@ void ClosureTestPythia(std::string particle="pi0")
       grphenix->SetPointError(i,xerrlow,xerrhigh,toterr,toterr);
     }
 
+    for(int i=0; i<gr->GetN(); i++){
+      float x = gr->GetPointX(i);
+      float y = gr->GetPointY(i);
+      float yerr = gr->GetErrorY(i);
+      float yerrsys = gr->GetErrorY(i);
+      float xerr = gr->GetErrorX(i);
+      float xerrsys = gr->GetErrorX(i);
+      float fit_integral = fitc->Integral(x-xerr, x+xerr) / (2*xerr); 
+      //float fitval = fitc->Eval(x);//fit_integral;//fit->Eval(x);
+      float fitval = fit_integral;//fit->Eval(x);
+      float ratio = y/fitval;
+      float ratioerr = yerr/fitval;
+      gratio_sphenix->SetPoint(i,x,ratio);
+      gratio_sphenix->SetPointError(i,xerr,ratioerr);
+    }
+    for(int i=0;i<grphenix->GetN(); i++){ 
+      float x = grphenix->GetPointX(i);
+      float y = grphenix->GetPointY(i);
+      float yerr = grphenix->GetErrorY(i);
+      float xerr = grphenix->GetErrorX(i);
+      float fitval = fitc->Eval(x);
+      float ratio = y/fitval;
+      float ratioerr = yerr/fitval;
+      gratio_phenix->SetPoint(i,x,ratio);
+      gratio_phenix->SetPointError(i,xerr,ratioerr);
+    }
   }
   else if(particle=="eta"){
-    TFile *fphenix = new TFile("../Spectra/OtherExp/PHENIX_eta_pp.root","read");
+    TFile *fphenix = new TFile("PHENIX_eta_pp.root","read");
     dir = (TDirectory*) fphenix->Get("Figure 2-10");
     grphenix = (TGraphAsymmErrors*) dir->Get("Graph1D_y1");
     TH1F* hist_eplus = (TH1F*) dir->Get("Hist1D_y1_e1plus");
@@ -172,7 +195,7 @@ void ClosureTestPythia(std::string particle="pi0")
     }
     int np1 = grphenix->GetN();
 
-    TFile *fphenix2 = new TFile("../Spectra/OtherExp/PHENIX_eta_pp_v1.root","read");
+    TFile *fphenix2 = new TFile("PHENIX_eta_pp_v1.root","read");
     TDirectory *dir2 = (TDirectory*) fphenix2->Get("Figure 12.1");
     TGraphAsymmErrors *grphenix2 = (TGraphAsymmErrors*) dir2->Get("Graph1D_y1");
     TH1F* hist2_e1= (TH1F*) dir2->Get("Hist1D_y1_e1");
@@ -193,6 +216,33 @@ void ClosureTestPythia(std::string particle="pi0")
       double toterr = sqrt(err1*err1 + err2*err2 + err3*err3 + err4*err4);
       grphenix->SetPoint(i + np1,xpos,ypos);
       grphenix->SetPointError(i + np1,xerr,xerr,toterr,toterr);
+    }
+
+    for(int i=0; i<gr->GetN(); i++){
+      float x = gr->GetPointX(i);
+      float y = gr->GetPointY(i);
+      float yerr = gr->GetErrorY(i);
+      float yerrsys = gr->GetErrorY(i);
+      float xerr = gr->GetErrorX(i);
+      float xerrsys = gr->GetErrorX(i);
+      float fit_integral = fitc->Integral(x-xerr, x+xerr) / (2*xerr); 
+      //float fitval = fitc->Eval(x);//fit_integral;//fit->Eval(x);
+      float fitval = fit_integral;//fit->Eval(x);
+      float ratio = y/fitval;
+      float ratioerr = yerr/fitval;
+      gratio_sphenix->SetPoint(i,x,ratio);
+      gratio_sphenix->SetPointError(i,xerr,ratioerr);
+    }
+    for(int i=0;i<grphenix->GetN(); i++){ 
+      float x = grphenix->GetPointX(i);
+      float y = grphenix->GetPointY(i);
+      float yerr = grphenix->GetErrorY(i);
+      float xerr = grphenix->GetErrorX(i);
+      float fitval = fitc->Eval(x);
+      float ratio = y/fitval;
+      float ratioerr = yerr/fitval;
+      gratio_phenix->SetPoint(i,x,ratio);
+      gratio_phenix->SetPointError(i,xerr,ratioerr);
     }
 
   }
@@ -241,7 +291,7 @@ void ClosureTestPythia(std::string particle="pi0")
   grphenix->Draw("APE");
   gr->Draw("PE same");
   grtruth->Draw("PE same");
-  //fit->Draw("same");
+  fitc->Draw("same");
   
   drawText("#bf{#it{sPHENIX}} Internal",sPHENIX_posx-0.03,sPHENIX_posy,1,22);
   drawText("Pythia8 MB #kern[-0.5]{#sqrt{s}} = 200 GeV",sPHENIX_posx-0.03,sPHENIX_posy-posy_diff,1,19);
@@ -251,10 +301,10 @@ void ClosureTestPythia(std::string particle="pi0")
   l->SetTextSize(0.0385);
   if(particle=="pi0") l->SetHeader("#bf{#pi^{0}}");
   else l->SetHeader("#bf{#eta}");
-  l->AddEntry(gr,"Reco corrected |y|<1","pe");
+  l->AddEntry(gr,"sPHENIX |y|<1","pe");
   l->AddEntry(grphenix,"PHENIX |y|<0.35","pe");
-  l->AddEntry(grtruth,"Truth |y|<1","pe");
-  //l->AddEntry(fit,"Fit to truth","l");
+  l->AddEntry(grtruth,"Pythia8 |y|<1","pe");
+  l->AddEntry(fit,"Fit to PHENIX","l");
 
   l->Draw("same");
 
@@ -273,15 +323,6 @@ void ClosureTestPythia(std::string particle="pi0")
   gratio_sphenix->SetMarkerStyle(kFullCircle);
   gratio_sphenix->SetMarkerColor(kPink-6);
   gratio_sphenix->SetLineColor(kPink-6);
-  SetGraphStyle(gratio_truth,0,4);
-  gratio_truth->SetMarkerStyle(kFullDiamond);
-  gratio_truth->SetMarkerColor(kPink-6);
-  gratio_truth->SetLineColor(kPink-6);
-  gratio_truth->SetMarkerStyle(kFullDiamond);
-  gratio_truth->SetMarkerSize(1.7);
-  gratio_truth->SetMarkerColor(kGreen+2);
-  gratio_truth->SetLineColor(kGreen+2);
-  gratio_truth->SetFillColor(kGreen+2);
   c1->cd();
   pad2->Draw();
   pad2->cd();
@@ -293,31 +334,33 @@ void ClosureTestPythia(std::string particle="pi0")
   c1->Modified();
   c1->Update();
   pad2->SetLogy(0);
-  gratio_sphenix->GetXaxis()->SetLabelSize(0.11);
-  gratio_sphenix->GetYaxis()->SetLabelSize(0.11);
-  gratio_sphenix->GetYaxis()->SetNdivisions(505);
-  gratio_sphenix->GetXaxis()->SetTitleSize(0.12);
-  gratio_sphenix->GetYaxis()->SetTitleSize(0.11);
-  gratio_sphenix->GetYaxis()->SetTitle("Ratio");
-  gratio_sphenix->GetXaxis()->SetTitle("p_{T}^{#pi^{0}} [GeV/c]");
-  gratio_sphenix->GetXaxis()->CenterTitle();
-  gratio_sphenix->GetYaxis()->CenterTitle();
-  gratio_sphenix->GetYaxis()->SetTitleOffset(0.7);
-  gratio_sphenix->GetXaxis()->SetTitleOffset(1.1);
-  gratio_sphenix->GetYaxis()->SetLimits(0,2);
-  gratio_sphenix->GetYaxis()->SetRangeUser(0.5,1.5);
-  gratio_sphenix->GetXaxis()->SetLimits(0,10);
-  gratio_sphenix->GetXaxis()->SetRangeUser(0,10);
+  gratio_phenix->GetXaxis()->SetLabelSize(0.11);
+  gratio_phenix->GetYaxis()->SetLabelSize(0.11);
+  gratio_phenix->GetYaxis()->SetNdivisions(505);
+  gratio_phenix->GetXaxis()->SetTitleSize(0.12);
+  gratio_phenix->GetYaxis()->SetTitleSize(0.11);
+  gratio_phenix->GetYaxis()->SetTitle("Ratio-to-fit");
+  gratio_phenix->GetXaxis()->SetTitle("p_{T}^{#eta} [GeV/c]");
+  gratio_phenix->GetXaxis()->CenterTitle();
+  gratio_phenix->GetYaxis()->CenterTitle();
+  gratio_phenix->GetYaxis()->SetTitleOffset(0.7);
+  gratio_phenix->GetXaxis()->SetTitleOffset(1.1);
+  gratio_phenix->GetYaxis()->SetLimits(0,2);
+  gratio_phenix->GetYaxis()->SetRangeUser(0,1.99);
+  gratio_phenix->GetXaxis()->SetLimits(0,10);
+  gratio_phenix->GetXaxis()->SetRangeUser(0,10);
   gratio_sphenix->GetXaxis()->SetLimits(0,10);
   gratio_sphenix->GetXaxis()->SetRangeUser(0,10);
 
-  gratio_sphenix->Draw("AP");
+  gratio_phenix->Draw("AP");
+  gratio_sphenix->Draw("P same");
   dashedLine(0,1,10,1,1,2);
 
   TLegend *l2 = new TLegend(0.56,0.78,0.88,0.96);
   SetLegendStyle(l2);
   l2->SetTextSize(0.075);
-  l2->AddEntry(gratio_sphenix,"Reco corrected","pe");
+  l2->AddEntry(gratio_sphenix,"sPHENIX","pe");
+  l2->AddEntry(gratio_phenix,"PHENIX","pe");
   l2->Draw("same");
   c1->Modified();
   c1->Update();

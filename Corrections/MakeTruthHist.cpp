@@ -3,9 +3,9 @@
 #include "../Headers/TreeSetting.h"
 #include <TEfficiency.h>
 
-void MakeTruthHist(std::string particletype="pi0", std::string sampletype="MB", bool doReweight=false)
+void MakeTruthHist(std::string particletype="eta", std::string sampletype="MB", bool doReweight=false)
 {
-  int mbindex=3;
+  int mbindex=0;
   gSystem->Load("../Headers/libMyDict.so");
 
   std::string trigstring;
@@ -102,25 +102,25 @@ void MakeTruthHist(std::string particletype="pi0", std::string sampletype="MB", 
       if(fabs(truth_vz)>vzcut)continue;
       if(truth_id[itruth] != pdgid) continue;
       auto trdipho = *(TLorentzVector*) truth_diphoton_4mom->At(itruth);
-      auto trpho1 = *(TLorentzVector*) truth_photon1_4mom->At(itruth);
-      auto trpho2 = *(TLorentzVector*) truth_photon2_4mom->At(itruth);
+      //auto trpho1 = *(TLorentzVector*) truth_photon1_4mom->At(itruth);
+      //auto trpho2 = *(TLorentzVector*) truth_photon2_4mom->At(itruth);
       float _truthpt = trdipho.Pt();
       float _truthy = trdipho.Rapidity();
       if(_truthpt<1) continue;
       if(_truthy < tretamin || _truthy > tretamax ) continue;
-      if(particletype=="pi0" && (!truth_found_decay1[itruth] || !truth_found_decay2[itruth])) continue;
+      //if(particletype=="pi0" && (!truth_found_diphotondecay[itruth])) continue;
       //if(!truth_found_decay1[itruth] || !truth_found_decay2[itruth]) continue;
       if(_truthpt > truthpt){
         truthpt = _truthpt;
         truthy = _truthy;
         trutheta = trdipho.Eta();
-        trutheta1 = trpho1.Eta();
-        trutheta2 = trpho2.Eta();
         truthphi = trdipho.Phi();
+        truthe = trdipho.E();
+        /*trutheta1 = trpho1.Eta();
+        trutheta2 = trpho2.Eta();
         truthphi1 = trpho1.Phi();
         truthphi2 = trpho2.Phi();
-        truthe = trdipho.E();
-        maxtruthidx = itruth;
+        */maxtruthidx = itruth;
         foundmaxpt = true; 
       }
       reweightfactor =  (doReweight) ? hreweight->GetBinContent(hreweight->FindFixBin(_truthpt)) * vzreweightfactor : 1;

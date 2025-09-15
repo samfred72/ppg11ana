@@ -258,13 +258,13 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /sphenix/user/samfred/run25/treemaking/ppg11ana/src/missing aclocal-1.16
+ACLOCAL = ${SHELL} /sphenix/user/samfred/run25/ppg11/treemaking/src/missing aclocal-1.16
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 AR = ar
-AUTOCONF = ${SHELL} /sphenix/user/samfred/run25/treemaking/ppg11ana/src/missing autoconf
-AUTOHEADER = ${SHELL} /sphenix/user/samfred/run25/treemaking/ppg11ana/src/missing autoheader
-AUTOMAKE = ${SHELL} /sphenix/user/samfred/run25/treemaking/ppg11ana/src/missing automake-1.16
+AUTOCONF = ${SHELL} /sphenix/user/samfred/run25/ppg11/treemaking/src/missing autoconf
+AUTOHEADER = ${SHELL} /sphenix/user/samfred/run25/ppg11/treemaking/src/missing autoheader
+AUTOMAKE = ${SHELL} /sphenix/user/samfred/run25/ppg11/treemaking/src/missing automake-1.16
 AWK = gawk
 CC = /cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/bin/gcc
 CCDEPMODE = depmode=gcc3
@@ -303,7 +303,7 @@ LIPO =
 LN_S = ln -s
 LTLIBOBJS = 
 LT_SYS_LIBRARY_PATH = 
-MAKEINFO = ${SHELL} /sphenix/user/samfred/run25/treemaking/ppg11ana/src/missing makeinfo
+MAKEINFO = ${SHELL} /sphenix/user/samfred/run25/ppg11/treemaking/src/missing makeinfo
 MANIFEST_TOOL = :
 MKDIR_P = /usr/bin/mkdir -p
 NM = /cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/binutils/2.40-acaab/x86_64-el9/bin/nm -B
@@ -326,10 +326,10 @@ SET_MAKE =
 SHELL = /bin/sh
 STRIP = strip
 VERSION = 1.00
-abs_builddir = /sphenix/user/samfred/run25/treemaking/ppg11ana/build
-abs_srcdir = /sphenix/user/samfred/run25/treemaking/ppg11ana/build/../src
-abs_top_builddir = /sphenix/user/samfred/run25/treemaking/ppg11ana/build
-abs_top_srcdir = /sphenix/user/samfred/run25/treemaking/ppg11ana/build/../src
+abs_builddir = /sphenix/user/samfred/run25/ppg11/treemaking/build
+abs_srcdir = /sphenix/user/samfred/run25/ppg11/treemaking/build/../src
+abs_top_builddir = /sphenix/user/samfred/run25/ppg11/treemaking/build
+abs_top_srcdir = /sphenix/user/samfred/run25/ppg11/treemaking/build/../src
 ac_ct_AR = ar
 ac_ct_CC = /cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/bin/gcc
 ac_ct_CXX = 
@@ -359,7 +359,7 @@ host_vendor = pc
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /sphenix/user/samfred/run25/treemaking/ppg11ana/src/install-sh
+install_sh = ${SHELL} /sphenix/user/samfred/run25/ppg11/treemaking/src/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -368,7 +368,7 @@ mandir = ${datarootdir}/man
 mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
-prefix = /sphenix/user/samfred/run25/treemaking/ppg11ana/install
+prefix = /sphenix/user/samfred/run25/ppg11/treemaking/install
 program_transform_name = s,x,x,
 psdir = ${docdir}
 runstatedir = ${localstatedir}/run
@@ -426,6 +426,7 @@ libcaloana_la_LIBADD = \
 	-lcalotrigger \
   -lSubsysReco \
 	-lphg4hit \
+	-ltruthneutralmeson_io \
 	-lffaobjects
 
 BUILT_SOURCES = testexternals.cc

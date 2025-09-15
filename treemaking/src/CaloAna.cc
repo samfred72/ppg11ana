@@ -71,9 +71,13 @@ void CaloAna::InitTree(){
       towerntuple->Branch("truth_vz",&truth_vz);
       towerntuple->Branch("truthpar_n",&truthpar_n);
       towerntuple->Branch("truth_id",truth_id,"truth_id[truthpar_n]/I");
+      towerntuple->Branch("truth_pt",truth_pt,"truth_pt[truthpar_n]/I");
+      towerntuple->Branch("truth_eta",truth_eta,"truth_eta[truthpar_n]/I");
+      towerntuple->Branch("truth_phi",truth_phi,"truth_phi[truthpar_n]/I");
+      towerntuple->Branch("truth_found_diphotondecay",found_diphotondecay,"truth_found_diphotondecay[truthpar_n]/O");
+      towerntuple->Branch("truth_found_3pi0decay",found_3pi0decay,"truth_found_3pi0decay[truthpar_n]/O");
+      towerntuple->Branch("truth_found_pi0pipmdecay",found_pi0pipmdecay,"truth_found_pi0pipmdecay[truthpar_n]/O");
       towerntuple->Branch("truth_isconverted",isconverted,"truth_isconverted[truthpar_n]/O");
-      towerntuple->Branch("truth_found_decay1",found_decay1,"truth_found_decay1[truthpar_n]/O");
-      towerntuple->Branch("truth_found_decay2",found_decay2,"truth_found_decay2[truthpar_n]/O");
       towerntuple->Branch("truth_isconverted1",isconverted1,"truth_isconverted1[truthpar_n]/O");
       towerntuple->Branch("truth_isconverted2",isconverted2,"truth_isconverted2[truthpar_n]/O");
       if(isPythia) towerntuple->Branch("processId",&processId);
@@ -283,7 +287,7 @@ int CaloAna::process_towers(PHCompositeNode* topNode)
       float clEta = E_vec_cluster.pseudoRapidity();
       float clPhi = E_vec_cluster.phi();
       float clE = E_vec_cluster.mag();
-      //if(clPt < _emcal_cluster_emincut) continue;
+      if(clPt < _emcal_cluster_emincut) continue;
       
       TLorentzVector vphoton1_mother;
       vphoton1_mother.SetPtEtaPhiE(clPt,clEta,clPhi,clE);
@@ -304,7 +308,7 @@ int CaloAna::process_towers(PHCompositeNode* topNode)
         float clE2 = E_vec_cluster2.mag();
 
         if( abs(clEta2-clEta)<1e-4 && abs(clPhi2-clPhi)<1e-4) continue;
-        //if (clPt2 < _emcal_cluster_emincut) continue;
+        if (clPt2 < _emcal_cluster_emincut) continue;
 
         TLorentzVector vphoton2_mother;
         vphoton2_mother.SetPtEtaPhiE(clPt2,clEta2,clPhi2,clE2);
@@ -554,7 +558,7 @@ int CaloAna::process_towers(PHCompositeNode* topNode)
       float clEta = E_vec_cluster.pseudoRapidity();
       float clPhi = E_vec_cluster.phi();
       float clE = E_vec_cluster.mag();
-      //if(clPt < _emcal_cluster_emincut) continue;
+      if(clPt < _emcal_cluster_emincut) continue;
       photon_prob[nClusters] = cluster->get_prob();
       photon_prob_merged_cluster[nClusters] = cluster->get_merged_cluster_prob();
 
@@ -577,7 +581,7 @@ int CaloAna::process_towers(PHCompositeNode* topNode)
         float clE2 = E_vec_cluster2.mag();
 
         if( abs(clEta2-clEta)<1e-4 && abs(clPhi2-clPhi)<1e-4) continue;
-        //if (clPt2 < _emcal_cluster_emincut) continue;
+        if (clPt2 < _emcal_cluster_emincut) continue;
 
         TLorentzVector vphoton2;
         vphoton2.SetPtEtaPhiE(clPt2,clEta2,clPhi2,clE2);
@@ -666,7 +670,7 @@ int CaloAna::process_towers(PHCompositeNode* topNode)
       nClusters++;
     }
   }
-    //if(!isMC && nPairs==0) return Fun4AllReturnCodes::ABORTEVENT;
+    if(!isMC && nPairs==0) return Fun4AllReturnCodes::ABORTEVENT;
   
   if(doJets){
 
@@ -807,9 +811,9 @@ int CaloAna::process_towers(PHCompositeNode* topNode)
     if(nClusters ==0 || nJets==0) return Fun4AllReturnCodes::ABORTEVENT;
   }
 
-  //if (doClusters && isMC) {
-  //  if (nPairs == 0 && truthpar_n == 0) return Fun4AllReturnCodes::ABORTEVENT;
-  //}
+  if (doClusters && isMC) {
+    if (nPairs == 0 && truthpar_n == 0) return Fun4AllReturnCodes::ABORTEVENT;
+  }
 
   towerntuple->Fill();
 
@@ -997,86 +1001,77 @@ int CaloAna::ProcessGlobalEventInfo(PHCompositeNode* topNode){
 }
 
 void CaloAna::ProcessFillTruthParticle(PHCompositeNode* topNode, float truthvz){
-  PHG4TruthInfoContainer* truthinfo = findNode::getClass <PHG4TruthInfoContainer> (topNode, "G4TruthInfo");
-  if(!truthinfo){std::cout << "no truth info node... just skip the whole part.." << std::endl; return;}
-  PHG4TruthInfoContainer::Range range = truthinfo->GetPrimaryParticleRange();
-  
+  TruthNeutralMesonContainer* truthcont = findNode::getClass<TruthNeutralMesonContainer>(topNode,"TruthNeutralMeson");
+  if (!truthcont)
+  {
+    std::cout << PHWHERE << " missing TruthNeutralMesonContainer node " << std::endl;
+    return;
+  }
+
+  truth_diphoton_4mom->Clear();
   truth_photon1_4mom->Clear();
   truth_photon2_4mom->Clear();
-  truth_diphoton_4mom->Clear(); 
-    
+
   float etamin = GetShiftedEta(truthvz,-2);
   float etamax = GetShiftedEta(truthvz,2);
   truthpar_n=0;
-  for (PHG4TruthInfoContainer::ConstIterator iter = range.first; iter != range.second; ++iter)
+  int decaytruth_n=0;
+  TruthNeutralMesonContainer::Range range = truthcont->getMesons();
+  for(TruthNeutralMesonContainer::ConstIterator it = range.first; it != range.second; ++it)
   {
-    PHG4Particle* g4particle = iter->second;
-    if(isSingleGun){
-      if(g4particle->get_pid() != PDGPID || g4particle->get_parent_id()!=0 || !truthinfo->is_primary(g4particle)){
-        std::cout << "something is not right... " << g4particle->get_pid() << "/" << PDGPID << " " << g4particle->get_parent_id() << " " << truthinfo->is_primary(g4particle) << std::endl;
-      }
-    }
-    if (!truthinfo->is_primary(g4particle)) continue;
-    if(isHI){
-      if(truthinfo->isEmbeded(g4particle->get_track_id())<=0) continue;
+    TruthNeutralMeson* truth = it->second;
+    if(!truth)
+    {
+      std::cout << "no truthneutralmeson continuing" << std::endl;
+      continue;
     }
 
-    if(g4particle->get_parent_id()!=0) continue;
-    if(isPythia){
-      //if(g4particle->get_pid() != 111 && g4particle->get_pid() != 221 && g4particle->get_pid() !=22 ) continue;
-      if(g4particle->get_pid() != 111 && g4particle->get_pid() != 221 ) continue;
-    }
-    else if(!isPythia){
-      if(g4particle->get_pid() != PDGPID || g4particle->get_parent_id()!=0) continue;
-    }
+    int _pid = truth->get_pid();
+    if(_pid != 111 && _pid != 221) continue;
+    float _e = truth->get_e();
+    float _pt = truth->get_pt();
+    float _eta = truth->get_eta();
+    float _phi = truth->get_phi();
+
+    bool _isdiphoton = truth->is_diphoton();
 
     TLorentzVector t;
-    t.SetPxPyPzE(g4particle->get_px (), g4particle->get_py (), g4particle->get_pz (), g4particle->get_e ());
-    new ((*truth_diphoton_4mom)[truthpar_n]) TLorentzVector(t);
-
+    t.SetPtEtaPhiE(_pt, _eta, _phi, _e);
     if(t.Eta() > etamax || t.Eta() < etamin) continue;
-    // take only particles from primary Pythia event                                                            
-    truth_id[truthpar_n] = g4particle->get_pid();
-    isconverted[truthpar_n]= FindConversion(truthinfo,g4particle->get_track_id(),t.E());
-    truth_track_id[truthpar_n]= g4particle->get_track_id();
-    found_decay1[truthpar_n] = false;
-    found_decay2[truthpar_n] = false;
+
+    truth_id[truthpar_n] = _pid;
+    truth_pt[truthpar_n] = t.Pt();
+    truth_eta[truthpar_n] = t.Eta();
+    truth_phi[truthpar_n] = t.Phi();
+    found_diphotondecay[truthpar_n] = truth->is_diphoton();
+    found_3pi0decay[truthpar_n] = truth->is_eta_3pi0();
+    found_pi0pipmdecay[truthpar_n] = truth->is_eta_pi0pipm();
     isconverted1[truthpar_n]= false;
     isconverted2[truthpar_n]= false;
-    new ((*truth_photon1_4mom)[truthpar_n]) TLorentzVector(0, 0, 0, 0);
-    new ((*truth_photon2_4mom)[truthpar_n]) TLorentzVector(0, 0, 0, 0);
-    truthpar_n++;
-  }
+    new ((*truth_diphoton_4mom)[truthpar_n]) TLorentzVector(t);
+    if(_isdiphoton)
+    {
+      for(int i=0; i<2; ++i){
+        float _decaye = truth->get_photon_e(i);
+        float _decaypt = truth->get_photon_pt(i);
+        float _decayeta = truth->get_photon_eta(i);
+        float _decayphi = truth->get_photon_phi(i);
 
-  if(!isPythia && PDGPID == 22) return;
-  PHG4TruthInfoContainer::Range truthRangeDecay1 = truthinfo->GetSecondaryParticleRange();
-  PHG4TruthInfoContainer::ConstIterator truthIterDecay1;
-  for(truthIterDecay1 = truthRangeDecay1.first; truthIterDecay1 != truthRangeDecay1.second; truthIterDecay1++)
-  {
-    PHG4Particle *decay = truthIterDecay1 -> second;
-    int truthpid = decay -> get_pid();
-    int parentid = decay -> get_parent_id();
-
-    if(truthpid == 22){
-      for(int it = 0; it<truthpar_n; it++){
-        if(parentid != truth_track_id[it]){
-          continue;
-        }
         TLorentzVector tpho;
-        tpho.SetPxPyPzE(decay -> get_px(), decay -> get_py(), decay -> get_pz(), decay -> get_e());
-
-        if(!found_decay1[it]){
-          new ((*truth_photon1_4mom)[it]) TLorentzVector(tpho);
-          found_decay1[it] = true;
-          isconverted1[it]= FindConversion(truthinfo,truth_track_id[it],tpho.E());
+        tpho.SetPtEtaPhiE(_decaypt,_decayeta,_decayphi,_decaye);
+        if(i ==0){
+          new ((*truth_photon1_4mom)[decaytruth_n]) TLorentzVector(tpho);
+          isconverted1[truthpar_n]= truth->get_photon_converted(i);
         }
-        else if(!found_decay2[it]){
-          new ((*truth_photon2_4mom)[it]) TLorentzVector(tpho);
-          found_decay2[it] = true;
-          isconverted2[it]= FindConversion(truthinfo,truth_track_id[it],tpho.E());
+        else if(i==1){
+          new ((*truth_photon2_4mom)[decaytruth_n]) TLorentzVector(tpho);
+          isconverted2[truthpar_n]= truth->get_photon_converted(i);
         }
       }
+      decaytruth_n++;
     }
+    isconverted[truthpar_n]= isconverted1[truthpar_n] && isconverted2[truthpar_n];
+    truthpar_n++;
   }
 }
 

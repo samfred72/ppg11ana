@@ -49,6 +49,7 @@ libcaloana_la_LIBADD = \
 	-lcalotrigger \
   -lSubsysReco \
 	-lphg4hit \
+	-ltruthneutralmeson_io \
 	-lffaobjects
 #	-lRooFit \
 #	-lRooFitCore

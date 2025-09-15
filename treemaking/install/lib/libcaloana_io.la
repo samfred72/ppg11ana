@@ -17,7 +17,7 @@ old_library=''
 inherited_linker_flags=''
 
 # Libraries that this one depends upon.
-dependency_libs=' -L/sphenix/user/samfred/run25/treemaking/ppg11ana/install/lib -L/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.1/lib -L/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.1/lib64 -lphool'
+dependency_libs=' -L/sphenix/user/samfred/run25/ppg11/treemaking/install/lib -L/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.20/lib -L/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.20/lib64 -lphool'
 
 # Names of additional weak libraries provided by this library
 weak_library_names=''
@@ -38,4 +38,4 @@ dlopen=''
 dlpreopen=''
 
 # Directory that this library needs to be installed in:
-libdir='/sphenix/user/samfred/run25/treemaking/ppg11ana/install/lib'
+libdir='/sphenix/user/samfred/run25/ppg11/treemaking/install/lib'

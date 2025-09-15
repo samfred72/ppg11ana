@@ -426,6 +426,7 @@ libcaloana_la_LIBADD = \
 	-lcalotrigger \
   -lSubsysReco \
 	-lphg4hit \
+	-ltruthneutralmeson_io \
 	-lffaobjects
 
 BUILT_SOURCES = testexternals.cc

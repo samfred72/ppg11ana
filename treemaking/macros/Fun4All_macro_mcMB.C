@@ -51,6 +51,11 @@
 #include <phool/PHCompositeNode.h>
 #include <g4centrality/PHG4CentralityReco.h>
 
+#include <truthneutralmesonfinder/TruthNeutralMeson.h>
+#include <truthneutralmesonfinder/TruthNeutralMesonv1.h>
+#include <truthneutralmesonfinder/TruthNeutralMesonContainer.h>
+#include <truthneutralmesonfinder/TruthNeutralMesonBuilder.h>
+
 #include <centrality/CentralityReco.h>
 #include <calotrigger/MinimumBiasClassifier.h>
 
@@ -70,7 +75,7 @@ R__LOAD_LIBRARY(libg4centrality.so)
 R__LOAD_LIBRARY(libcentrality.so)
 R__LOAD_LIBRARY(libcalotrigger.so)
 R__LOAD_LIBRARY(libFROG.so)
-
+R__LOAD_LIBRARY(libtruthneutralmeson.so)
 
 #endif
 
@@ -111,8 +116,8 @@ void Fun4All_macro_mcMB(const char * inqueue="queue_run28_v00001.list", bool isM
     if(dirf) gSystem->FreeDirectory(dirf);
     else {gSystem->mkdir(outdir.c_str(), kTRUE);}
     
-    //const char *outfile = Form("%s/outtree_%s",outdir.c_str(),inqueue);
-    const char *outfile = Form("test_%s.root",inqueue);
+    const char *outfile = Form("%s/outtree_%s",outdir.c_str(),inqueue);
+    //const char *outfile = Form("test_%s.root",inqueue);
 
     //===============
     // conditions DB flags
@@ -153,15 +158,18 @@ void Fun4All_macro_mcMB(const char * inqueue="queue_run28_v00001.list", bool isM
     }
     se->registerInputManager(intruth);
 
+    TruthNeutralMesonBuilder *truthnmb = new TruthNeutralMesonBuilder("TruthNeutralMesonBuilder");
+    se->registerSubsystem(truthnmb);
+
     CaloAna *ca = new CaloAna("caloana",outfile,1,0);
     ca->SetRunNumber(runnumber);
     ca->SetMbdZVtxCut(mbdzvtxcut);
     ca->SetMCFlags(1,0);
-    ca->SetUseOfClusters(0);//should be 1
+    ca->SetUseOfClusters(1);//should be 1
     se->registerSubsystem(ca);
 
     std::cout << "now run..." << std::endl;
-    se->run(10000);
+    se->run();
     se->End();
     std::cout << "ok done.. " << std::endl;
 

@@ -42,19 +42,21 @@ void truthhistmaker(int section = 0, const char * type = "MB")
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     t->GetEntry(jentry);
 
-    if (fabs(vz) > 30) continue;
+    if (fabs(truth_vz) > 30) continue;
     float maxpt = 0;
     bool ispi0 = false;
     bool isineta = false;
+    bool haspt = false;
     for (int it = 0; it < truthpar_n; it++) {
       auto pho = *(TLorentzVector*) truth_diphoton_4mom->At(it);
       if (truth_id[it] == 111 && pho.Pt() > maxpt) maxpt = pho.Pt();
       if (truth_id[it] == 111) ispi0 = true;
       if (truth_id[it] == 111 && abs(pho.Eta()) < 1) isineta = true; 
+      if (truth_id[it] == 111 && pho.Pt() > 1) haspt = true;
     }
     hmaxpt->Fill(maxpt);  
 
-    if (!ispi0 || !isineta) continue;
+    if (!ispi0 || !isineta || !haspt) continue;
     bool foundmaxcluster = false;
     for(int icl=0;icl<nClusters_mother;icl++){
       auto pho = *(TLorentzVector*) photon_4mom_mother->At(icl);

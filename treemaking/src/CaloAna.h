@@ -102,6 +102,11 @@
 #include <phool/getClass.h>
 #include <phool/PHCompositeNode.h>
 
+// truth clusters
+#include <truthneutralmesonfinder/TruthNeutralMeson.h>
+#include <truthneutralmesonfinder/TruthNeutralMesonv1.h>
+#include <truthneutralmesonfinder/TruthNeutralMesonContainer.h>
+
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -134,7 +139,7 @@ class PHG4Shower;
 class TriggerPrimitive;
 class TriggerPrimitiveContainer;
 class LL1Out;
-
+class TruthNeutralMeson;
 
 class CaloAna : public SubsysReco
 {
@@ -360,12 +365,16 @@ class CaloAna : public SubsysReco
   float truth_vy=-999;
   int truthpar_n = 0;
   int truth_id[nParticleTruth];
+  int truth_pt[nParticleTruth];
+  int truth_eta[nParticleTruth];
+  int truth_phi[nParticleTruth];
   bool isconverted[nParticleTruth];
   bool isconverted1[nParticleTruth];
   bool isconverted2[nParticleTruth];
   int truth_track_id[nParticleTruth];
-  bool found_decay1[nParticleTruth];
-  bool found_decay2[nParticleTruth];
+  bool found_diphotondecay[nParticleTruth];
+  bool found_3pi0decay[nParticleTruth];
+  bool found_pi0pipmdecay[nParticleTruth];
 
   int PDGPID = 111;
   TLorentzVector truthphoton1;

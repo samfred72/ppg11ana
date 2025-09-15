@@ -1,0 +1,14 @@
+Executable  = script.sh
+Universe    = vanilla
+notification= Never
+Input       = /dev/null
+Arguments       = $(filename)
+Initialdir    = /sphenix/user/samfred/run25/ppg11/data_treemaking/macros
+Output    = /dev/null
+Error     = /dev/null
+Log       = /tmp/samfred/$(process)_ab.log
+PeriodicHold  = (NumJobStarts>=1 && JobStatus == 1)
+job_lease_duration = 3600
+
+Queue filename from queue_ab
+

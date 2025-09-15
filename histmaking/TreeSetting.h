@@ -124,9 +124,24 @@ void treesetup(TTree* tree, bool isMC = 0){
   diphoton_4mom = 0;
   diphoton_4mom_mother = 0;
 
-  tree->SetBranchAddress("RunNumber", &RunNumber, &b_RunNumber);
+  tree->SetBranchStatus("*",0);
+  tree->SetBranchStatus("vz",1);
+  tree->SetBranchStatus("nClusters",1);
+  tree->SetBranchStatus("nClusters_mother",1);
+  tree->SetBranchStatus("nPairs",1);
+  tree->SetBranchStatus("photon_4mom",1);
+  tree->SetBranchStatus("photon_4mom_mother",1);
+  tree->SetBranchStatus("diphoton_4mom",1);
+  tree->SetBranchStatus("photon_prob",1);
+  tree->SetBranchStatus("diphoton_energyimbal",1);
+  tree->SetBranchStatus("idx_photon1",1);
+  tree->SetBranchStatus("idx_photon2",1);
+  tree->SetBranchStatus("ScaledTriggerBit",1);
+  tree->SetBranchStatus("LiveTriggerBit",1);
+
+  //tree->SetBranchAddress("RunNumber", &RunNumber, &b_RunNumber);
   tree->SetBranchAddress("vz", &vz, &b_vz);
-  tree->SetBranchAddress("emcal_total_energy", &emcal_total_energy, &b_emcal_total_energy);
+  //tree->SetBranchAddress("emcal_total_energy", &emcal_total_energy, &b_emcal_total_energy);
   if(isMC){
     tree->SetBranchAddress("truth_photon1_4mom", &truth_photon1_4mom, &b_truth_photon1_4mom);
     tree->SetBranchAddress("truth_photon2_4mom", &truth_photon2_4mom, &b_truth_photon2_4mom);

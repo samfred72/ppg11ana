@@ -36,7 +36,7 @@ void drawPeakWidthComp(const char * particle, bool isprob=false)
   if(!isprob) str_prob = "without_prob";
   int pointcount=0;
   for(int i = 2; i < 7; ++i) {
-    TFile *f = new TFile(Form("/sphenix/user/samfred/run25/ppg11/histmaking/sufficient_%s/workspace_fits_data_%s_pt%i.root",str_prob.c_str(),particle,i),"read");
+    TFile *f = new TFile(Form("/sphenix/user/samfred/run25/ppg11/histmaking/sufficient/workspace_fits_data_%s_pt%i.root",particle,i),"read");
 
     RooWorkspace *w = (RooWorkspace*) f->Get("workspace");
     RooFitResult *fitRes = (RooFitResult*)w->obj("fitresult_model_binnedData");
@@ -58,7 +58,7 @@ void drawPeakWidthComp(const char * particle, bool isprob=false)
     f->Close();
     delete f;
 
-    f = new TFile(Form("/sphenix/user/samfred/run25/ppg11/histmaking/sufficient_%s/workspace_fits_MB_%s_pt%i.root",str_prob.c_str(),particle,i),"read");
+    f = new TFile(Form("/sphenix/user/samfred/run25/ppg11/histmaking/sufficient/workspace_fits_MB_%s_pt%i.root",particle,i),"read");
 
     w = (RooWorkspace*) f->Get("workspace");
     fitRes = (RooFitResult*)w->obj("fitresult_model_binnedData");

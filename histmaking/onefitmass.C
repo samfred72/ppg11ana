@@ -1,5 +1,6 @@
 #include "commonUtility.h"
 #include "Style_jaebeom.h"
+#include "onefitmass.h"
 #include <map>
 
 using namespace RooFit;
@@ -29,67 +30,26 @@ TH1D * shorthist(TH1D * hist, float low, float high) {
 }
 
 
-void onefitmass(const char * particle = "pi0", const char * type = "MB", const char *  subytpe = "", int pt = 1) {
-  map<string,map<int,float>> map_plotlow;
-  map<string,map<int,float>> map_plothigh;
-  map<string,map<int,float>> map_initialmean;
-  map<string,map<int,float>> map_initialsigma;
-  map<string,map<int,float>> map_Astart;
-  map<string,map<int,float>> map_Alow;
-  map<string,map<int,float>> map_Ahigh;
-  map_plotlow["pi0"][1] = 0.05; map_plotlow["eta"][1] = 0.35;
-  map_plotlow["pi0"][2] = 0.05; map_plotlow["eta"][2] = 0.35;
-  map_plotlow["pi0"][3] = 0.05; map_plotlow["eta"][3] = 0.35;
-  map_plotlow["pi0"][4] = 0.05; map_plotlow["eta"][4] = 0.35;
-  map_plotlow["pi0"][5] = 0.09; map_plotlow["eta"][5] = 0.35;
-  map_plotlow["pi0"][6] = 0.09; map_plotlow["eta"][6] = 0.35;
-  map_plothigh["pi0"][1] = 0.23; map_plothigh["eta"][1] = 0.75;
-  map_plothigh["pi0"][2] = 0.23; map_plothigh["eta"][2] = 0.75;
-  map_plothigh["pi0"][3] = 0.23; map_plothigh["eta"][3] = 0.75;
-  map_plothigh["pi0"][4] = 0.23; map_plothigh["eta"][4] = 0.75;
-  map_plothigh["pi0"][5] = 0.20; map_plothigh["eta"][5] = 0.75;
-  map_plothigh["pi0"][6] = 0.20; map_plothigh["eta"][6] = 0.75;
-  map_initialmean["pi0"][1] = 0.13; map_initialmean["eta"][1] = 0.60;
-  map_initialmean["pi0"][2] = 0.13; map_initialmean["eta"][2] = 0.60;
-  map_initialmean["pi0"][3] = 0.13; map_initialmean["eta"][3] = 0.60;
-  map_initialmean["pi0"][4] = 0.13; map_initialmean["eta"][4] = 0.60;
-  map_initialmean["pi0"][5] = 0.13; map_initialmean["eta"][5] = 0.60;
-  map_initialmean["pi0"][6] = 0.13; map_initialmean["eta"][6] = 0.60;
-  map_initialsigma["pi0"][1] = 0.01; map_initialsigma["eta"][1] = 0.03;
-  map_initialsigma["pi0"][2] = 0.01; map_initialsigma["eta"][2] = 0.03;
-  map_initialsigma["pi0"][3] = 0.01; map_initialsigma["eta"][3] = 0.03;
-  map_initialsigma["pi0"][4] = 0.01; map_initialsigma["eta"][4] = 0.03;
-  map_initialsigma["pi0"][5] = 0.01; map_initialsigma["eta"][5] = 0.03;
-  map_initialsigma["pi0"][6] = 0.01; map_initialsigma["eta"][6] = 0.03;
-  map_Astart["pi0"][1] = -10; map_Astart["eta"][1] = -10;
-  map_Astart["pi0"][2] = -10; map_Astart["eta"][2] = -10;
-  map_Astart["pi0"][3] = -10; map_Astart["eta"][3] = -10;
-  map_Astart["pi0"][4] = -10; map_Astart["eta"][4] = -10;
-  map_Astart["pi0"][5] = 0; map_Astart["eta"][5] = -10;
-  map_Astart["pi0"][6] = 0; map_Astart["eta"][6] = 10;
-  map_Alow["pi0"][1] = -1e7; map_Alow["eta"][1] = -1e1;
-  map_Alow["pi0"][2] = -1e7; map_Alow["eta"][2] = -1e1;
-  map_Alow["pi0"][3] = -1e7; map_Alow["eta"][3] = -1e1;
-  map_Alow["pi0"][4] = -1e7; map_Alow["eta"][4] = -1e1;
-  map_Alow["pi0"][5] = -1e7; map_Alow["eta"][5] = -1e1;
-  map_Alow["pi0"][6] = -1e7; map_Alow["eta"][6] = -1e1;
-  map_Ahigh["pi0"][1] = 1e7; map_Ahigh["eta"][1] = 1e1;
-  map_Ahigh["pi0"][2] = 1e7; map_Ahigh["eta"][2] = 1e1;
-  map_Ahigh["pi0"][3] = 1e7; map_Ahigh["eta"][3] = 1e1;
-  map_Ahigh["pi0"][4] = 1e7; map_Ahigh["eta"][4] = 1e1;
-  map_Ahigh["pi0"][5] = 1e7; map_Ahigh["eta"][5] = 1e1;
-  map_Ahigh["pi0"][6] = 1e7; map_Ahigh["eta"][6] = 1e1;
+void onefitmass(const char * particle = "pi0", const char * sample = "MC", const char * trigger = "MB", int pt = 1) {
+  set_maps();
 
-  float plotlow =      map_plotlow[particle][pt];
-  float plothigh =     map_plothigh[particle][pt];
-  float initialmean =  map_initialmean[particle][pt];
-  float initialsigma = map_initialsigma[particle][pt];
-  float Alow =         map_Alow[particle][pt];
-  float Ahigh =        map_Ahigh[particle][pt];
-  float Astart =       map_Astart[particle][pt];
+  map<string,int> textmap = {{"pi0",0},{"eta",1},
+                             {"data",0},{"MC",1},
+                             {"MB",0}};
 
-  TFile * wf = new TFile(Form("workspaces/workspace_fits_%s_%s_pt%i.root",type,particle,pt),"RECREATE"); 
-  TFile * inf = TFile::Open(Form("hists/mass_%s.root",type),"READ");
+  float plotlow =      map_plotlow     [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float plothigh =     map_plothigh    [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float initialmean =  map_initialmean [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float initialsigma = map_initialsigma[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float Alow =         map_Alow        [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float Ahigh =        map_Ahigh       [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float Astart =       map_Astart      [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float Blow =         map_Alow        [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float Bhigh =        map_Ahigh       [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float Bstart =       map_Astart      [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+
+  TFile * wf = new TFile(Form("workspaces/workspace_fits_%s_%s_pt%i.root",sample,particle,pt),"RECREATE"); 
+  TFile * inf = TFile::Open(Form("hists/mass_%s_%s.root",sample,trigger),"READ");
   TH1D * h = shorthist((TH1D*)inf->Get(Form("hmass_%s_pt%i",particle,pt)),plotlow,plothigh);
 
   TCanvas * c = new TCanvas("c","",600,800);
@@ -111,11 +71,11 @@ void onefitmass(const char * particle = "pi0", const char * type = "MB", const c
     cout << "Histogram too empty! Exiting." << endl;
   }
 
-  if (strcmp(particle,"eta") == 0 && strcmp(type,"MB") == 0) {
+  if (strcmp(particle,"eta") == 0 && strcmp(sample,"MC") == 0) {
     h->Rebin(2);
     if (pt > 4) h->Rebin(2);
   }
-  if (strcmp(particle,"pi0") == 0 && strcmp(type,"MB") == 0) {
+  if (strcmp(particle,"pi0") == 0 && strcmp(sample,"MC") == 0) {
     if (pt > 5) h->Rebin(2);
   }
   // Fitting with RooFit
@@ -125,7 +85,7 @@ void onefitmass(const char * particle = "pi0", const char * type = "MB", const c
 
   // Gaussian/double gaussian
   RooRealVar mu("mean", "mean of gaussian",initialmean,initialmean-0.05,initialmean+0.05);
-  RooRealVar sigma1("sigma1", "width of gaussian", initialsigma, 0.005, 0.07); 
+  RooRealVar sigma1("sigma1", "width of gaussian", initialsigma, 0.005, 0.1); 
   RooRealVar sigma2("sigma2", "width of gaussian", initialsigma*1.1, 0.001, 0.2);
   RooGaussian * signal1 = new RooGaussian("signal1", "gaussian PDF", *(ws->var("mass")), mu, sigma1);
   RooGaussian * signal2 = new RooGaussian("signal2", "gaussian PDF", *(ws->var("mass")), mu, sigma2);
@@ -154,16 +114,16 @@ void onefitmass(const char * particle = "pi0", const char * type = "MB", const c
   RooGenericPdf * bkg;
   // Different choices for background and signal
   if (strcmp(particle,"pi0") == 0) {
-    if (strcmp(type,"MB") == 0) bkg = (RooGenericPdf*) poly2;
-    if (strcmp(type,"Jet10") == 0) bkg = (RooGenericPdf*) poly3;
-    if (strcmp(type,"Jet20") == 0) bkg = (RooGenericPdf*) poly3;
-    if (strcmp(type,"Jet30") == 0) bkg = (RooGenericPdf*) poly3;
+    if (strcmp(trigger,"MB") == 0) bkg = (RooGenericPdf*) poly2;
+    if (strcmp(trigger,"Jet10") == 0) bkg = (RooGenericPdf*) poly3;
+    if (strcmp(trigger,"Jet20") == 0) bkg = (RooGenericPdf*) poly3;
+    if (strcmp(trigger,"Jet30") == 0) bkg = (RooGenericPdf*) poly3;
   }
   else {
-    if (strcmp(type,"MB") == 0) bkg = (RooGenericPdf*) line;
-    if (strcmp(type,"Jet10") == 0) bkg = (RooGenericPdf*) poly2;
-    if (strcmp(type,"Jet20") == 0) bkg = (RooGenericPdf*) poly2;
-    if (strcmp(type,"Jet30") == 0) bkg = (RooGenericPdf*) poly2;
+    if (strcmp(trigger,"MB") == 0) bkg = (RooGenericPdf*) line;
+    if (strcmp(trigger,"Jet10") == 0) bkg = (RooGenericPdf*) poly2;
+    if (strcmp(trigger,"Jet20") == 0) bkg = (RooGenericPdf*) poly2;
+    if (strcmp(trigger,"Jet30") == 0) bkg = (RooGenericPdf*) poly2;
   }
 
   RooGenericPdf * sig;
@@ -192,7 +152,7 @@ void onefitmass(const char * particle = "pi0", const char * type = "MB", const c
                                                              //RooCmdArg opt11= RooFit::EvalErrorWall(kTRUE); fitcmd->Add(&opt11);//tRooCmdArg::none();
                                                              //RooCmdArg opt12= RooFit::Strategy(2); fitcmd->Add(&opt12);//tRooCmdArg::none();
                                                              //RooCmdArg opt13= RooFit::RecoverFromUndefinedRegions(3); fitcmd->Add(&opt13);//tRooCmdArg::none();
-  RooCmdArg opt14= RooFit::BatchMode(kTRUE); fitcmd->Add(&opt14);//tRooCmdArg::none();
+  //RooCmdArg opt14= RooFit::BatchMode(kTRUE); fitcmd->Add(&opt14);//tRooCmdArg::none();
   RooCmdArg opt15= RooFit::PrintEvalErrors(-1); fitcmd->Add(&opt15);//tRooCmdArg::none();
 
   RooFitResult * res = ws->pdf("model")->fitTo(data, *fitcmd);
@@ -246,7 +206,7 @@ void onefitmass(const char * particle = "pi0", const char * type = "MB", const c
   plot->Draw();
 
   drawText("#bf{#it{sPHENIX}} Internal",0.55,0.81,1,22);
-  const char * runtext = Form("MC Pythia run 28 %s",type);
+  const char * runtext = Form("MC Pythia run 28 %s",sample);
   drawText(runtext,0.55,0.74,1,22);
   drawText(Form("%i GeV < p_{T,#gamma#gamma} < %i GeV",pt,pt+1),0.6,0.68,1,16);
   drawText("|vz| < 30 cm",0.6,0.63,1,16);
@@ -342,15 +302,15 @@ void onefitmass(const char * particle = "pi0", const char * type = "MB", const c
 
 
   //return;
-  c->SaveAs(Form("pdfs/mass_fits_%s_%s_pt%i.pdf",type,particle,pt));
+  c->SaveAs(Form("pdfs/mass_fits_%s_%s_pt%i.pdf",sample,particle,pt));
   wf->cd();
   h->Write();
   wf->cd();
   ws->Write(); 
-  workspacename = Form("workspaces/workspace_fits_%s_%s_pt%i.root",type,particle,pt);
-  workspacesufficient = Form("sufficient/workspace_fits_%s_%s_pt%i.root",type,particle,pt);
-  pdffilename = Form("pdfs/mass_fits_%s_%s_pt%i.pdf",type,particle,pt);
-  pdfsufficient = Form("sufficient/mass_fits_%s_%s_pt%i.pdf",type,particle,pt);
+  workspacename = Form("workspaces/workspace_fits_%s_%s_pt%i.root",sample,particle,pt);
+  workspacesufficient = Form("sufficient/workspace_fits_%s_%s_pt%i.root",sample,particle,pt);
+  pdffilename = Form("pdfs/mass_fits_%s_%s_pt%i.pdf",sample,particle,pt);
+  pdfsufficient = Form("sufficient/mass_fits_%s_%s_pt%i.pdf",sample,particle,pt);
 
 }
 

@@ -44,9 +44,9 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
   float Alow =         map_Alow        [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
   float Ahigh =        map_Ahigh       [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
   float Astart =       map_Astart      [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
-  float Blow =         map_Alow        [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
-  float Bhigh =        map_Ahigh       [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
-  float Bstart =       map_Astart      [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float Blow =         map_Blow        [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float Bhigh =        map_Bhigh       [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float Bstart =       map_Bstart      [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
 
   TFile * wf = new TFile(Form("workspaces/workspace_fits_%s_%s_pt%i.root",sample,particle,pt),"RECREATE"); 
   TFile * inf = TFile::Open(Form("hists/mass_%s_%s.root",sample,trigger),"READ");
@@ -101,7 +101,7 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
 
   // polynomial/chebyshev background
   RooRealVar A("a", "1th order coefficient",Astart,Alow,Ahigh);
-  RooRealVar B("b", "2th order coefficient",-10,-1e8,1e8);
+  RooRealVar B("b", "2th order coefficient",Bstart,Blow,Bhigh);
   RooRealVar C("c", "3th order coefficient",-100,-1e9,1e9);
   RooRealVar D("d", "4th order coefficient",0,-1e9,1e9);
   RooPolynomial *line = new RooPolynomial("line", "first order polynomial", *(ws->var("mass")), RooArgList(A));

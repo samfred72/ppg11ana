@@ -9,7 +9,14 @@ void truthhistmaker(int section = 0, const char * type = "MB")
   int runnum = 28; 
   const char *dir = Form("/sphenix/tg/tg01/jets/samfred/run25/pythia_%s_hadded",type);
   string filename = (section == -1) ? Form("%s/run%i_%s.root",dir,runnum,type) : Form("%s/run%i_%i.root",dir,runnum,section);
-  float minClusterMaxE = 0.5;
+  float ptcut = 1;
+  bool doprob = false;
+  bool dosmear = true;
+  // Scales for MC smearing
+  float escale = 1.03;
+  float econst = 0.1;
+  float efrac = 0.1;
+  float pfrac = 0.001;
 
   TFile *f = new TFile(Form("%s",filename.c_str()),"read");
   TTree *t = (TTree*) f->Get("towerntup");
@@ -24,7 +31,7 @@ void truthhistmaker(int section = 0, const char * type = "MB")
   double pi0mass = anaclone.pi0mass;
   double etamass = anaclone.etamass;
 
-  const char * wfilename = (section == -1) ? Form("hists/truth_mass_%s.root",type) : Form("hists/truth_mass_%s_%i.root",type,section);
+  const char * wfilename = (section == -1) ? Form("hists/mass_%s.root",type) : Form("hists/mass_%s_%i.root",type,section);
   TFile *wf = new TFile(wfilename,"recreate");
   TH1D *hmass[nPtBins];
   TH1D *hmass_pi0[nPtBins];
@@ -34,6 +41,11 @@ void truthhistmaker(int section = 0, const char * type = "MB")
     hmass_pi0[ipt] = new TH1D(Form("hmass_pi0_pt%d",ipt),";m_{#gamma_{1}#gamma_{2}};",100,0,0.3);
     hmass_eta[ipt] = new TH1D(Form("hmass_eta_pt%d",ipt),";m_{#gamma_{1}#gamma_{2}};",100,0.3,0.8);
   }
+  TH1D * ptss = new TH1D("ptss",";pt;counts",256,0,10);
+  TH1D * ptds = new TH1D("ptds",";pt;counts",256,0,10);
+  TH1D * ptsu = new TH1D("ptsu",";pt;counts",256,0,10);
+  TH1D * ptdu = new TH1D("ptdu",";pt;counts",256,0,10);
+  TRandom rndm;
   TH1D *hmaxpt = new TH1D("hmaxpt",";max p_{T,#pi^0}^{truth};weighted counts;",64,0,64);
   Long64_t nentries = t->GetEntriesFast();
   Long64_t livecount=0;
@@ -42,7 +54,7 @@ void truthhistmaker(int section = 0, const char * type = "MB")
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     t->GetEntry(jentry);
 
-    if (fabs(truth_vz) > 30) continue;
+    if (fabs(vz) > 30) continue;
     float maxpt = 0;
     bool ispi0 = false;
     bool isineta = false;
@@ -56,13 +68,13 @@ void truthhistmaker(int section = 0, const char * type = "MB")
     }
     hmaxpt->Fill(maxpt);  
 
-    if (!ispi0 || !isineta || !haspt) continue;
-    bool foundmaxcluster = false;
-    for(int icl=0;icl<nClusters_mother;icl++){
-      auto pho = *(TLorentzVector*) photon_4mom_mother->At(icl);
-      if(pho.E() > minClusterMaxE) foundmaxcluster = true;
-    }
-    if(!foundmaxcluster) continue;
+    //if (!ispi0 || !isineta || !haspt) continue;
+    //bool foundmaxcluster = false;
+    //for(int icl=0;icl<nClusters_mother;icl++){
+    //  auto pho = *(TLorentzVector*) photon_4mom_mother->At(icl);
+    //  if(pho.E() > minClusterMaxE) foundmaxcluster = true;
+    //}
+    //if(!foundmaxcluster) continue;
 
     if(jentry % 1000==0) std::cout << "entry " << jentry << "/" << nentries << " (" << (float)jentry/nentries*100. << "%)" << std::endl;
 
@@ -71,11 +83,12 @@ void truthhistmaker(int section = 0, const char * type = "MB")
       auto pho1 = (TLorentzVector*) photon_4mom->At(idx_photon1[ip]);
       auto pho2 = (TLorentzVector*) photon_4mom->At(idx_photon2[ip]);
 
+      float pt = pho->Pt();
+      float e1 = pho1->E();
+      float e2 = pho2->E();
       float pt1 = pho1->Pt();
       float pt2 = pho2->Pt();
 
-      float pt = pho->Pt();
-      float mass = pho->M();
       float etamin = anaclone.GetShiftedEta(vz,-1);
       float etamax = anaclone.GetShiftedEta(vz,1);
       
@@ -83,21 +96,69 @@ void truthhistmaker(int section = 0, const char * type = "MB")
       float eta2 = pho2->Eta();
       float phi1 = pho1->Phi();
       float phi2 = pho2->Phi();
-
-      if(fabs(eta1)>etamax || fabs(eta1) < etamin) continue;
-      if(fabs(eta2)>etamax || fabs(eta2) < etamin) continue;
-      if(pt1 < 0.5 || pt2 < 0.5) continue;
-
-      if(diphoton_energyimbal[ip] > 0.6) continue;
-
-      if(photon_prob[idx_photon1[ip]] < 0.05 || photon_prob[idx_photon2[ip]] < 0.05) continue;
       
-      int bin = (int)pt;
-      if(bin >= 0 && bin < nPtBins){
-        hmass[bin]->Fill(mass);
-        hmass_pi0[bin]->Fill(mass);
-        hmass_eta[bin]->Fill(mass);
+      float eta1fl = rndm.Gaus(eta1,pfrac/(e1)); 
+      float phi1fl = rndm.Gaus(phi1,pfrac/(e1)); 
+      float eta2fl = rndm.Gaus(eta2,pfrac/(e2)); 
+      float phi2fl = rndm.Gaus(phi2,pfrac/(e2)); 
+
+      float e1fl = rndm.Gaus(e1*escale,econst+efrac/TMath::Sqrt(e1));
+      float e2fl = rndm.Gaus(e2*escale,econst+efrac/TMath::Sqrt(e2));
+      float pt1fl = e1fl/cosh(eta1fl);
+      float pt2fl = e2fl/cosh(eta2fl);
+
+      bool fill = true;
+      if (eta1 > etamax || eta1 < etamin) fill = false;
+      if (eta2 > etamax || eta2 < etamin) fill = false;
+      if (pho->M() < 0.1 || pho->M() > .2) fill = false;
+      if (fill) {
+        ptsu->Fill(pt1);
+        ptsu->Fill(pt2);
+        ptdu->Fill(pt);
       }
+
+
+      if (dosmear) {
+        if (eta1fl > etamax || eta1fl < etamin) continue;
+        if (eta2fl > etamax || eta2fl < etamin) continue;
+      }
+      else {
+        if (eta1 > etamax || eta1 < etamin) continue;
+        if (eta2 > etamax || eta2 < etamin) continue;
+      }
+      TLorentzVector pho1fl;
+      TLorentzVector pho2fl;
+      pho1fl.SetPtEtaPhiE(pt1fl,eta1fl,phi1fl,e1fl);
+      pho2fl.SetPtEtaPhiE(pt2fl,eta2fl,phi2fl,e2fl);
+      TLorentzVector phofl = pho1fl + pho2fl;
+      
+
+      if (phofl.M() > 0.1 && phofl.M() < 0.2) {
+        ptss->Fill(pt1fl);
+        ptss->Fill(pt2fl);
+        ptds->Fill(phofl.Pt());
+      }
+      if (dosmear) {
+        if(pt1fl < ptcut || pt2fl < ptcut) continue;
+      }
+      else {
+        if(pt1 < ptcut || pt2 < ptcut) continue;
+      }
+      float energyimbal = (dosmear ? abs(pho1fl.E() - pho2fl.E())/(pho1fl.E() + pho2fl.E()) : diphoton_energyimbal[ip]);
+      if(energyimbal > 0.6) continue;
+      if (doprob) {
+        if(photon_prob[idx_photon1[ip]] < 0.05 || photon_prob[idx_photon2[ip]] < 0.05) continue;
+      }
+
+      
+      float mass = (dosmear ? phofl.M() : pho->M()); 
+      if (dosmear) pt = phofl.Pt();
+      int bin = (int)pt;
+      if (bin < 0 || bin >= nPtBins) continue;
+      
+      hmass[bin]->Fill(mass);
+      hmass_pi0[bin]->Fill(mass);
+      hmass_eta[bin]->Fill(mass);
     }
   }
 
@@ -108,4 +169,8 @@ void truthhistmaker(int section = 0, const char * type = "MB")
     hmass_eta[ip]->Write();
   }
   hmaxpt->Write();
+  ptss->Write();
+  ptds->Write();
+  ptsu->Write();
+  ptdu->Write();
 }

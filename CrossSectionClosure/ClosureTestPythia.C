@@ -1,8 +1,8 @@
 #include <iostream>
 #include <RooWorkspace.h>
 #include <cmath>
-#include "../Headers/ana.cxx"
-#include "../Headers/TreeSetting.h"
+#include "../histmaking/ana.cxx"
+#include "../histmaking/TreeSetting.h"
 #include "/sphenix/user/jpark4/Utility/Style_jaebeom.h"
 #include "/sphenix/user/jpark4/Utility/commonUtility.h"
 
@@ -23,16 +23,17 @@ void ClosureTestPythia(std::string particle="pi0")
   double posy_diff = anac.posy_diff;
 
   double truthvz_factors = 2.7916;
-  TFile *f1 = new TFile(Form("/sphenix/user/samfred/run25/ppg11/histmaking/%syields.root",particle.c_str()),"read");
+  TFile *f1 = new TFile(Form("/sphenix/user/samfred/run25/ppg11/histmaking/data_%syields.root",particle.c_str()),"read");
   TH1D  *h1 = (TH1D*) f1->Get(Form("%syields",particle.c_str()));
-  h1->Scale(truthvz_factors);
+  //h1->Scale(truthvz_factors);
 
   double lumi = 100*1e6 / 42.0;
+  double datalumi = 0.03228e9;
   double dy = 2.0;
   double br = (particle=="pi0") ? 0.98823 : 1;
   double norm = 2*M_PI;
 
-  TFile *f2 = new TFile(Form("output/eff_output_noreweight_pythiaMB_%s.root",particle.c_str()),"read");
+  TFile *f2 = new TFile(Form("eff_output_noreweight_pythiaMB_%s.root",particle.c_str()),"read");
   TH1D* h2 = (TH1D*) f2->Get("heff");
   
   std::string fitfilename = (particle == "pi0") ? "fit_pythiamb_cross_section_pi0.root" : "fit_pythiamb_cross_section_tsallis_eta.root";
@@ -42,7 +43,7 @@ void ClosureTestPythia(std::string particle="pi0")
   fit->SetNpx(1000);
   fit->SetLineColor(kGreen);
 
-  TFile *ft = new TFile(Form("output/hist_truth_noreweight_%s_MB.root",particle.c_str()),"read");
+  TFile *ft = new TFile(Form("hist_truth_noreweight_%s_MB.root",particle.c_str()),"read");
   TH1D* htruth = (TH1D*) ft->Get("heff_sp_pt_den");
   htruth->Scale(truthvz_factors);
 
@@ -50,6 +51,7 @@ void ClosureTestPythia(std::string particle="pi0")
   TGraphErrors *grtruth = new TGraphErrors();
 
   int ip=0;
+  int toppoint = 0;
   for(int i=1; i <= h1->GetNbinsX(); ++i){
     float ptlow = h1->GetBinCenter(i) - h1->GetBinWidth(i)/2;
     float pthigh = h1->GetBinCenter(i) + h1->GetBinWidth(i)/2;
@@ -63,9 +65,10 @@ void ClosureTestPythia(std::string particle="pi0")
     double den = fit->Integral(ptlow, pthigh);
     double meanpt = num/den; 
     double corr = h2->GetBinContent(i);
-    
-    double normalization = lumi * dy * br * norm * dpt * meanpt * corr;
-    
+  
+    cout << corr << endl;
+    double normalization = datalumi * dy * br * norm * dpt * meanpt * corr;
+
     yield = yield/normalization;
     yielderr = yielderr/normalization;
 
@@ -73,7 +76,7 @@ void ClosureTestPythia(std::string particle="pi0")
     gr->SetPointError(ip, dpt/2, yielderr);
     ip++;
   }
-
+  toppoint=ip;
   ip=0;
   for(int i=1; i <= htruth->GetNbinsX(); ++i){
     float ptlow = htruth->GetBinCenter(i) - htruth->GetBinWidth(i)/2;
@@ -95,6 +98,7 @@ void ClosureTestPythia(std::string particle="pi0")
 
     grtruth->SetPoint(ip,ptpos, yield);
     grtruth->SetPointError(ip, dpt/2, yielderr);
+    if (ip > toppoint) gr->SetPoint(ip,ptpos,0);
     ip++;
   }
   grtruth->SetMarkerStyle(kFullDiamond);
@@ -111,7 +115,7 @@ void ClosureTestPythia(std::string particle="pi0")
   f1->Close();
   
   TGraphAsymmErrors *grphenix; 
-  TFile *filefit = new TFile(Form("../Spectra/cross_section_%s_fit.root",particle.c_str()),"read");
+  TFile *filefit = new TFile(Form("cross_section_%s_fit.root",particle.c_str()),"read");
   TF1 *fitc= (TF1*) filefit->Get("fit");
   fitc->SetNpx(1000);
   fitc->SetLineColor(kRed);
@@ -120,7 +124,7 @@ void ClosureTestPythia(std::string particle="pi0")
   TGraphErrors *gratio_sphenix = getGraphRatio(gr, grtruth);
   TDirectory *dir;
   if(particle=="pi0"){
-    TFile *fphenix = new TFile("../Spectra/OtherExp/PHENIX_pi0_pp.root","read");
+    TFile *fphenix = new TFile("PHENIX_pi0_pp.root","read");
     dir = (TDirectory*) fphenix->Get("Figure 1d-2");
     grphenix = (TGraphAsymmErrors*) dir->Get("Graph1D_y2");
     TH1F* hist_e1= (TH1F*) dir->Get("Hist1D_y2_e1");
@@ -146,7 +150,7 @@ void ClosureTestPythia(std::string particle="pi0")
 
   }
   else if(particle=="eta"){
-    TFile *fphenix = new TFile("../Spectra/OtherExp/PHENIX_eta_pp.root","read");
+    TFile *fphenix = new TFile("PHENIX_eta_pp.root","read");
     dir = (TDirectory*) fphenix->Get("Figure 2-10");
     grphenix = (TGraphAsymmErrors*) dir->Get("Graph1D_y1");
     TH1F* hist_eplus = (TH1F*) dir->Get("Hist1D_y1_e1plus");
@@ -172,7 +176,7 @@ void ClosureTestPythia(std::string particle="pi0")
     }
     int np1 = grphenix->GetN();
 
-    TFile *fphenix2 = new TFile("../Spectra/OtherExp/PHENIX_eta_pp_v1.root","read");
+    TFile *fphenix2 = new TFile("PHENIX_eta_pp_v1.root","read");
     TDirectory *dir2 = (TDirectory*) fphenix2->Get("Figure 12.1");
     TGraphAsymmErrors *grphenix2 = (TGraphAsymmErrors*) dir2->Get("Graph1D_y1");
     TH1F* hist2_e1= (TH1F*) dir2->Get("Hist1D_y1_e1");
@@ -230,6 +234,7 @@ void ClosureTestPythia(std::string particle="pi0")
   pad1->SetBottomMargin(0.02);
   pad1->SetLogy();
 
+
   grphenix->GetYaxis()->SetTitleSize(0.041);
   grphenix->GetYaxis()->SetTitleOffset(1.9);
   grphenix->GetYaxis()->SetTitle("E#frac{d^{3}#sigma}{dp^{3}} [mb GeV^{-2}c^{3}]");
@@ -255,8 +260,9 @@ void ClosureTestPythia(std::string particle="pi0")
   l->AddEntry(grphenix,"PHENIX |y|<0.35","pe");
   l->AddEntry(grtruth,"Truth |y|<1","pe");
   //l->AddEntry(fit,"Fit to truth","l");
+  l->Draw();
 
-  l->Draw("same");
+
 
   TLegend *l1 = new TLegend(0.51,0.52,0.65,0.62);
   SetLegendStyle(l1);
@@ -318,7 +324,7 @@ void ClosureTestPythia(std::string particle="pi0")
   SetLegendStyle(l2);
   l2->SetTextSize(0.075);
   l2->AddEntry(gratio_sphenix,"Reco corrected","pe");
-  l2->Draw("same");
+  //l2->Draw("same");
   c1->Modified();
   c1->Update();
   c1->SaveAs(Form("plots/closure_pythia_mb_%s.pdf",particle.c_str()));

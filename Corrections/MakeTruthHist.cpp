@@ -1,12 +1,12 @@
 #include <iostream>
-#include "../Headers/ana.cxx"
-#include "../Headers/TreeSetting.h"
+#include "../histmaking/ana.cxx"
+#include "../histmaking/TreeSetting.h"
 #include <TEfficiency.h>
 
-void MakeTruthHist(std::string particletype="eta", std::string sampletype="MB", bool doReweight=false)
+void MakeTruthHist(std::string particletype="pi0", std::string sampletype="MB", int loop = 0, bool doReweight=false)
 {
-  int mbindex=0;
-  gSystem->Load("../Headers/libMyDict.so");
+  int mbindex=loop;
+  //gSystem->Load("../Headers/libMyDict.so");
 
   std::string trigstring;
   int triggerbit;
@@ -24,7 +24,7 @@ void MakeTruthHist(std::string particletype="eta", std::string sampletype="MB", 
   std::string rwstr = "noreweight";
   double masslow, masshigh, mass0;
   int pdgid=-1;
-  
+
   TFile* fvzreweight;
   TH1D* hvzratio;
   TFile* fitreweight;
@@ -39,7 +39,7 @@ void MakeTruthHist(std::string particletype="eta", std::string sampletype="MB", 
 
   TFile *ftrigeff = new TFile("triggerefficiency.root","read");
   TF1* fitfunc = (TF1*) ftrigeff->Get("fitFunc");
-  
+
   if(sampletype == "MB"){
     filename = Form("%s/run28_%d.root",dir,mbindex);
   }
@@ -70,18 +70,21 @@ void MakeTruthHist(std::string particletype="eta", std::string sampletype="MB", 
 
   TH1D *heff_sp_pt_den = new TH1D("heff_sp_pt_den",";p_{T}^{truth} [GeV/c];",nbins,ptbin);
   TH1D *heff_sp_pt_den_fine = new TH1D("heff_sp_pt_den_fine",";p_{T}^{truth} [GeV/c];",nbinsfine,ptbinfine);
+  TH1D *heff_sp_pt_truth = new TH1D("heff_sp_pt_truth",";p_{T}^{truth} [GeV/c];",nbins,ptbin);
+  TH1D *heff_sp_pt_fine_truth = new TH1D("heff_sp_pt_fine_truth",";p_{T}^{truth} [GeV/c];",nbinsfine,ptbinfine);
   TH1D *hmass= new TH1D("hmass",";mass;",50,0,1);
   TH1D *hmass_truth= new TH1D("hmass_truth",";mass;",50,0,1);
-  
+
   Long64_t nentries = t->GetEntriesFast();
   Long64_t livecount=0;
   Long64_t scaledcount=0;
   Long64_t nbytes = 0, nb = 0;
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
     t->GetEntry(jentry);
+    if(fabs(truth_vz)>30) continue;
     float tretamin = anaclone.GetShiftedEta(truth_vz,-MAXETACUT);
     float tretamax = anaclone.GetShiftedEta(truth_vz,MAXETACUT);
-    
+
     float truthpt = -1;
     float truthy = -999;
     float truthphi = -999;
@@ -99,7 +102,6 @@ void MakeTruthHist(std::string particletype="eta", std::string sampletype="MB", 
     int ntr = 0;
     if(jentry % 5000==0) std::cout << "entry " << jentry << "/" << nentries << " (" << (float)jentry/nentries*100. << "%)" << std::endl;
     for(int itruth=0;itruth < truthpar_n; itruth++){
-      if(fabs(truth_vz)>vzcut)continue;
       if(truth_id[itruth] != pdgid) continue;
       auto trdipho = *(TLorentzVector*) truth_diphoton_4mom->At(itruth);
       //auto trpho1 = *(TLorentzVector*) truth_photon1_4mom->At(itruth);
@@ -117,19 +119,23 @@ void MakeTruthHist(std::string particletype="eta", std::string sampletype="MB", 
         truthphi = trdipho.Phi();
         truthe = trdipho.E();
         /*trutheta1 = trpho1.Eta();
-        trutheta2 = trpho2.Eta();
-        truthphi1 = trpho1.Phi();
-        truthphi2 = trpho2.Phi();
-        */maxtruthidx = itruth;
+          trutheta2 = trpho2.Eta();
+          truthphi1 = trpho1.Phi();
+          truthphi2 = trpho2.Phi();
+          */maxtruthidx = itruth;
         foundmaxpt = true; 
       }
       reweightfactor =  (doReweight) ? hreweight->GetBinContent(hreweight->FindFixBin(_truthpt)) * vzreweightfactor : 1;
-      heff_sp_pt_den->Fill(_truthpt,reweightfactor);
-      heff_sp_pt_den_fine->Fill(_truthpt,reweightfactor);
+      if (abs(vz) < 30) {
+        heff_sp_pt_den->Fill(_truthpt,reweightfactor);
+        heff_sp_pt_den_fine->Fill(_truthpt,reweightfactor);
+      }
+      heff_sp_pt_truth->Fill(_truthpt,reweightfactor);
+      heff_sp_pt_fine_truth->Fill(_truthpt,reweightfactor);
+      
       ntr++;
     } 
-    
-    if(fabs(vz)>30) continue;
+
     for(int ip=0; ip<nPairs; ip++){
       auto pho = (TLorentzVector*) diphoton_4mom->At(ip);
       auto pho1 = (TLorentzVector*) photon_4mom->At(idx_photon1[ip]);
@@ -147,7 +153,7 @@ void MakeTruthHist(std::string particletype="eta", std::string sampletype="MB", 
       float mass = pho->M();
       float etamin = anaclone.GetShiftedEta(vz,-MAXETACUT);
       float etamax = anaclone.GetShiftedEta(vz,MAXETACUT);
-      
+
       float eta1 = pho1->Eta();
       float eta2 = pho2->Eta();
       float phi1 = pho1->Phi();
@@ -168,6 +174,8 @@ void MakeTruthHist(std::string particletype="eta", std::string sampletype="MB", 
   wf->cd();
   heff_sp_pt_den->Write();
   heff_sp_pt_den_fine->Write();
+  heff_sp_pt_truth->Write();
+  heff_sp_pt_fine_truth->Write();
   hmass->Write();
   hmass_truth->Write();
 }

@@ -10,6 +10,34 @@ const char * workspacesufficient;
 const char * pdffilename;
 const char * pdfsufficient;
 
+void move() {
+  // Define the source and destination paths
+  std::filesystem::path source_path = workspacename;
+  std::filesystem::path destination_path = workspacesufficient;
+
+  try {
+    // Attempt to move the file
+    std::filesystem::rename(source_path, destination_path);
+    std::cout << "File moved successfully from " << source_path << " to " << destination_path << std::endl;
+  } catch (const std::filesystem::filesystem_error& e) {
+    // Handle potential errors during the move operation
+    std::cerr << "Error moving file: " << e.what() << std::endl;
+  }
+  
+  source_path = pdffilename;
+  destination_path = pdfsufficient;
+
+  try {
+    // Attempt to move the file
+    std::filesystem::rename(source_path, destination_path);
+    std::cout << "File moved successfully from " << source_path << " to " << destination_path << std::endl;
+  } catch (const std::filesystem::filesystem_error& e) {
+    // Handle potential errors during the move operation
+    std::cerr << "Error moving file: " << e.what() << std::endl;
+  }
+  return;
+}
+
 TH1D * shorthist(TH1D * hist, float low, float high) {
   int teststart = hist->FindBin(low);
   int zerostart = 0;
@@ -33,9 +61,12 @@ TH1D * shorthist(TH1D * hist, float low, float high) {
 void onefitmass(const char * particle = "pi0", const char * sample = "MC", const char * trigger = "MB", int pt = 1) {
   set_maps();
 
-  map<string,int> textmap = {{"pi0",0},{"eta",1},
+  map<string,int> textmap = {
+                             {"pi0",0},{"eta",1},
                              {"data",0},{"MC",1},
-                             {"MB",0}};
+                             {"MB",0},{"photon3",1},{"photon4",2},{"photon5",3},
+                             {"Jet10",1},{"Jet20",2},{"Jet30",3}
+                            };
 
   float plotlow =      map_plotlow     [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
   float plothigh =     map_plothigh    [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
@@ -48,9 +79,13 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
   float Bhigh =        map_Bhigh       [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
   float Bstart =       map_Bstart      [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
 
-  TFile * wf = new TFile(Form("workspaces/workspace_fits_%s_%s_pt%i.root",sample,particle,pt),"RECREATE"); 
-  TFile * inf = TFile::Open(Form("hists/mass_%s_%s.root",sample,trigger),"READ");
-  TH1D * h = shorthist((TH1D*)inf->Get(Form("hmass_%s_pt%i",particle,pt)),plotlow,plothigh);
+  TFile * wf = new TFile(Form("workspaces/workspace_fits_%s_%s_pt%i_%s.root",sample,particle,pt,trigger),"RECREATE"); 
+  TFile * inf;
+  if (strcmp(sample,"data") == 0) inf = TFile::Open("hists/mass_data.root","READ");
+  else if (strcmp(sample,"MC") == 0) inf = TFile::Open(Form("hists/mass_%s_%s.root",sample,trigger),"READ");
+  TH1D * h;
+  if (strcmp(sample,"data") == 0) h = shorthist((TH1D*)inf->Get(Form("hmass_%s_pt%i_%s",particle,pt,trigger)),plotlow,plothigh);
+  else if (strcmp(sample,"MC") == 0) h = shorthist((TH1D*)inf->Get(Form("hmass_%s_pt%i",particle,pt)),plotlow,plothigh);
 
   TCanvas * c = new TCanvas("c","",600,800);
   gStyle->SetOptStat(0);
@@ -59,7 +94,7 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
   int binhigh = h->FindBin(plothigh);
   int nbins = binhigh - binlow;
   cout << "Low bin: " << binlow << " High bin: " << binhigh << " nbins: " << nbins << endl;
-  //RooMsgService::instance().setSilentMode(true);
+  RooMsgService::instance().setSilentMode(true);
   RooWorkspace *ws = new RooWorkspace("workspace");
   ws->factory("mass[0.0, 1.0]");
   ws->var("mass")->setRange(plotlow,plothigh);
@@ -71,12 +106,22 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
     cout << "Histogram too empty! Exiting." << endl;
   }
 
+
   if (strcmp(particle,"eta") == 0 && strcmp(sample,"MC") == 0) {
     h->Rebin(2);
+    //if (pt == 2) h->Rebin(2);
+    if (pt > 3) h->Rebin(2);
     if (pt > 4) h->Rebin(2);
   }
   if (strcmp(particle,"pi0") == 0 && strcmp(sample,"MC") == 0) {
-    if (pt > 5) h->Rebin(2);
+    if (pt >= 5) h->Rebin(2);
+  }
+  if (strcmp(particle,"pi0") == 0 && strcmp(sample,"data") == 0) {
+    if (pt >= 7) h->Rebin(2);
+  }
+  if (strcmp(particle,"eta") == 0 && strcmp(sample,"data") == 0) {
+    if (pt >= 6) h->Rebin(2);
+    if (pt >= 8) h->Rebin(2);
   }
   // Fitting with RooFit
   RooDataHist data("binnedData", "Binned dataset", RooArgSet(*(ws->var("mass"))), h);
@@ -100,37 +145,32 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
   RooCrystalBall * cb = new RooCrystalBall("crystalBall", "Crystal Ball PDF", *(ws->var("mass")), x0, sigma, alpha, n);
 
   // polynomial/chebyshev background
-  RooRealVar A("a", "1th order coefficient",Astart,Alow,Ahigh);
-  RooRealVar B("b", "2th order coefficient",Bstart,Blow,Bhigh);
-  RooRealVar C("c", "3th order coefficient",-100,-1e9,1e9);
+  RooRealVar A("a", "1st order coefficient",Astart,Alow,Ahigh);
+  RooRealVar B("b", "2nd order coefficient",Bstart,Blow,Bhigh);
+  RooRealVar C("c", "3rd order coefficient",-100,-1e9,1e9);
   RooRealVar D("d", "4th order coefficient",0,-1e9,1e9);
-  RooPolynomial *line = new RooPolynomial("line", "first order polynomial", *(ws->var("mass")), RooArgList(A));
+  RooPolynomial *line = new RooPolynomial( "line",  "first order polynomial",  *(ws->var("mass")), RooArgList(A));
   RooPolynomial *poly2 = new RooPolynomial("poly2", "second order polynomial", *(ws->var("mass")), RooArgList(A,B));
-  RooPolynomial *poly3 = new RooPolynomial("poly3", "third order polynomial", *(ws->var("mass")), RooArgList(A,B,C));
+  RooPolynomial *poly3 = new RooPolynomial("poly3", "third order polynomial",  *(ws->var("mass")), RooArgList(A,B,C));
   RooPolynomial *poly4 = new RooPolynomial("poly4", "fourth order polynomial", *(ws->var("mass")), RooArgList(A,B,C,D));
   RooChebychev *cheb2 = new RooChebychev("cheb", "second order chebychev", *(ws->var("mass")), RooArgList(A,B));
-  RooChebychev *cheb3 = new RooChebychev("cheb", "third order chebychev", *(ws->var("mass")), RooArgList(A,B,C));
+  RooChebychev *cheb3 = new RooChebychev("cheb", "third order chebychev",  *(ws->var("mass")), RooArgList(A,B,C));
 
-  RooGenericPdf * bkg;
+  
   // Different choices for background and signal
-  if (strcmp(particle,"pi0") == 0) {
-    if (strcmp(trigger,"MB") == 0) bkg = (RooGenericPdf*) poly2;
-    if (strcmp(trigger,"Jet10") == 0) bkg = (RooGenericPdf*) poly3;
-    if (strcmp(trigger,"Jet20") == 0) bkg = (RooGenericPdf*) poly3;
-    if (strcmp(trigger,"Jet30") == 0) bkg = (RooGenericPdf*) poly3;
-  }
-  else {
-    if (strcmp(trigger,"MB") == 0) bkg = (RooGenericPdf*) line;
-    if (strcmp(trigger,"Jet10") == 0) bkg = (RooGenericPdf*) poly2;
-    if (strcmp(trigger,"Jet20") == 0) bkg = (RooGenericPdf*) poly2;
-    if (strcmp(trigger,"Jet30") == 0) bkg = (RooGenericPdf*) poly2;
-  }
-
   RooGenericPdf * sig;
-  const char * sigtype = "gauss";
+  RooGenericPdf * bkg;
+  const char * bkgtype = map_bkg[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  const char * sigtype = map_sig[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+
   if (strcmp("gauss",sigtype) == 0)       sig = (RooGenericPdf*) signal1;
   if (strcmp("doublegauss",sigtype) == 0) sig = (RooGenericPdf*) doubleGauss;
   if (strcmp("cb",sigtype) == 0)          sig = (RooGenericPdf*) cb;
+  
+  if (strcmp("line" ,bkgtype) == 0) bkg = (RooGenericPdf*) line;
+  if (strcmp("poly2",bkgtype) == 0) bkg = (RooGenericPdf*) poly2;
+  if (strcmp("poly3",bkgtype) == 0) bkg = (RooGenericPdf*) poly3;
+  if (strcmp("poly4",bkgtype) == 0) bkg = (RooGenericPdf*) poly4;
 
   RooRealVar nsig("nsig", "signal count", 1000, 10, 1e8);
   RooRealVar nbkg("nbkg", "background count", 100, 0, 1e8);
@@ -149,9 +189,9 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
   RooCmdArg opt8 = RooFit::Extended(kTRUE); fitcmd->Add(&opt8);
   RooCmdArg opt9 = RooFit::Minos(kFALSE); fitcmd->Add(&opt9);
   RooCmdArg opt10= RooFit::Hesse(kTRUE); fitcmd->Add(&opt10);//RooCmdArg::none();
-                                                             //RooCmdArg opt11= RooFit::EvalErrorWall(kTRUE); fitcmd->Add(&opt11);//tRooCmdArg::none();
-                                                             //RooCmdArg opt12= RooFit::Strategy(2); fitcmd->Add(&opt12);//tRooCmdArg::none();
-                                                             //RooCmdArg opt13= RooFit::RecoverFromUndefinedRegions(3); fitcmd->Add(&opt13);//tRooCmdArg::none();
+  //RooCmdArg opt11= RooFit::EvalErrorWall(kTRUE); fitcmd->Add(&opt11);//tRooCmdArg::none();
+  //RooCmdArg opt12= RooFit::Strategy(2); fitcmd->Add(&opt12);//tRooCmdArg::none();
+  //RooCmdArg opt13= RooFit::RecoverFromUndefinedRegions(3); fitcmd->Add(&opt13);//tRooCmdArg::none();
   //RooCmdArg opt14= RooFit::BatchMode(kTRUE); fitcmd->Add(&opt14);//tRooCmdArg::none();
   RooCmdArg opt15= RooFit::PrintEvalErrors(-1); fitcmd->Add(&opt15);//tRooCmdArg::none();
 
@@ -166,6 +206,8 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
 
 
   TPad * pplot = new TPad("pplot","",0,0.33,1,1);
+  //TPad * pplot = new TPad("pplot","",0,0,1,1);
+  pplot->SetBottomMargin(0.13);
   pplot->SetBottomMargin(0);
   pplot->SetRightMargin(0.02);
   pplot->SetLeftMargin(0.18);
@@ -203,17 +245,24 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
   plot->GetXaxis()->SetLabelSize(0);
   plot->GetXaxis()->SetTitleSize(0);
   plot->SetTitle("");
+  //plot->GetXaxis()->SetTitle("m_{#gamma#gamma} (GeV/c^{2})");
+  //plot->GetXaxis()->SetTitleOffset(1.20) ;
+  //plot->GetXaxis()->SetLabelOffset(0.04) ;
+  //plot->GetXaxis()->SetTitleSize(0.048) ;
+  //plot->GetXaxis()->SetLabelSize(0.04) ;
+  //plot->GetXaxis()->CenterTitle();
   plot->Draw();
 
   drawText("#bf{#it{sPHENIX}} Internal",0.55,0.81,1,22);
-  const char * runtext = Form("MC Pythia run 28 %s",sample);
+  const char * runtext;
+  if (strcmp(sample,"data") == 0) runtext = Form("Run 47289-53879 %s",trigger);
+  else if (strcmp(sample,"MC") == 0) runtext = Form("MC Pythia run 28 %s",trigger);
   drawText(runtext,0.55,0.74,1,22);
   drawText(Form("%i GeV < p_{T,#gamma#gamma} < %i GeV",pt,pt+1),0.6,0.68,1,16);
   drawText("|vz| < 30 cm",0.6,0.63,1,16);
   drawText("|#eta| < 1",0.6,0.58,1,16);
-  drawText("p_{T,#gamma} > 0.5 GeV",0.6,0.53,1,16);
-  drawText("prob_{#gamma} > 0.05",0.6,0.48,1,16);
-  drawText("#alpha < 0.6",0.6,0.43,1,16);
+  drawText("p_{T,#gamma} > 1 GeV",0.6,0.53,1,16);
+  drawText("#alpha < 0.6",0.6,0.48,1,16);
 
   ppull->cd();
   gPad->SetTicks(1,1);
@@ -302,42 +351,16 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
 
 
   //return;
-  c->SaveAs(Form("pdfs/mass_fits_%s_%s_pt%i.pdf",sample,particle,pt));
+  c->SaveAs(Form("pdfs/mass_fits_%s_%s_pt%i_%s.pdf",sample,particle,pt,trigger));
   wf->cd();
   h->Write();
   wf->cd();
   ws->Write(); 
-  workspacename = Form("workspaces/workspace_fits_%s_%s_pt%i.root",sample,particle,pt);
-  workspacesufficient = Form("sufficient/workspace_fits_%s_%s_pt%i.root",sample,particle,pt);
-  pdffilename = Form("pdfs/mass_fits_%s_%s_pt%i.pdf",sample,particle,pt);
-  pdfsufficient = Form("sufficient/mass_fits_%s_%s_pt%i.pdf",sample,particle,pt);
+  workspacename = Form("workspaces/workspace_fits_%s_%s_pt%i_%s.root",sample,particle,pt,trigger);
+  workspacesufficient = Form("sufficient_without_prob_1GeV_smear/workspace_fits_%s_%s_pt%i_%s.root",sample,particle,pt,trigger);
+  pdffilename = Form("pdfs/mass_fits_%s_%s_pt%i_%s.pdf",sample,particle,pt,trigger);
+  pdfsufficient = Form("sufficient_without_prob_1GeV_smear/mass_fits_%s_%s_pt%i_%s.pdf",sample,particle,pt,trigger);
+  move();
 
 }
 
-void move() {
-  // Define the source and destination paths
-  std::filesystem::path source_path = workspacename;
-  std::filesystem::path destination_path = workspacesufficient;
-
-  try {
-    // Attempt to move the file
-    std::filesystem::rename(source_path, destination_path);
-    std::cout << "File moved successfully from " << source_path << " to " << destination_path << std::endl;
-  } catch (const std::filesystem::filesystem_error& e) {
-    // Handle potential errors during the move operation
-    std::cerr << "Error moving file: " << e.what() << std::endl;
-  }
-  
-  source_path = pdffilename;
-  destination_path = pdfsufficient;
-
-  try {
-    // Attempt to move the file
-    std::filesystem::rename(source_path, destination_path);
-    std::cout << "File moved successfully from " << source_path << " to " << destination_path << std::endl;
-  } catch (const std::filesystem::filesystem_error& e) {
-    // Handle potential errors during the move operation
-    std::cerr << "Error moving file: " << e.what() << std::endl;
-  }
-  return;
-}

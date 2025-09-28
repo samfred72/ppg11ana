@@ -143,6 +143,18 @@ void treesetup(TTree* tree, bool isMC = 0){
   tree->SetBranchAddress("vz", &vz, &b_vz);
   //tree->SetBranchAddress("emcal_total_energy", &emcal_total_energy, &b_emcal_total_energy);
   if(isMC){
+    tree->SetBranchStatus("truth_photon1_4mom", 1);
+    tree->SetBranchStatus("truth_photon2_4mom", 1);
+    tree->SetBranchStatus("truth_diphoton_4mom", 1);
+    tree->SetBranchStatus("truth_vz", 1);
+    tree->SetBranchStatus("truthpar_n", 1);
+    tree->SetBranchStatus("truth_id", 1);
+    tree->SetBranchStatus("truth_isconverted", 1); 
+    tree->SetBranchStatus("truth_isconverted1",1);
+    tree->SetBranchStatus("truth_isconverted2",1);
+    tree->SetBranchStatus("truth_found_decay1",1);
+    tree->SetBranchStatus("truth_found_decay2",1);
+    tree->SetBranchStatus("reco_matched_truth_idx",1);
     tree->SetBranchAddress("truth_photon1_4mom", &truth_photon1_4mom, &b_truth_photon1_4mom);
     tree->SetBranchAddress("truth_photon2_4mom", &truth_photon2_4mom, &b_truth_photon2_4mom);
     tree->SetBranchAddress("truth_diphoton_4mom", &truth_diphoton_4mom, &b_truth_diphoton_4mom);

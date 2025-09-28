@@ -35,6 +35,7 @@ class ana {
     const double radius = 93; 
     static constexpr double etamin = -1;
     static constexpr double etamax = 1;
+    const double MAXETACUT = 1;
 
     const double dRcut = 0.05;
     const double erecotruthcut = 0.8;
@@ -46,8 +47,10 @@ class ana {
     const double effetamasslow = 0.4;
     const double effetamasshigh = 0.70;
 
-    static const int nPtBins = 28;
-    static constexpr double ptBins[nPtBins+1] = {2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 11, 12, 13, 14, 16, 18, 20, 22, 26, 30, 35, 40};
+    static const int nPtBins = 20;
+    static constexpr double ptBins[nPtBins+1] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+    static const int nPtBinsFine = 30;
+    static constexpr double ptBinsFine[nPtBinsFine+1] = {0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
     virtual Int_t findBin(double value);
 
   private:

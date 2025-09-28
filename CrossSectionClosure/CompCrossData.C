@@ -11,11 +11,13 @@ double GetGraphMaximum(TGraph* graph) {
   return graph ? TMath::MaxElement(graph->GetN(), graph->GetY()) : 0;
 }
 
-void CompCrossData(std::string particle="pi0")
+void CompCrossData(std::string particle="pi0",bool smear = 0)
 {
   gStyle->SetEndErrorSize(0);
   gStyle->SetOptStat(0);
   ana anac;
+  const char * smearstr = "";
+  if (smear) smearstr="_smear";
   const int nbins = anac.nPtBins;
   const double* bins = anac.ptBins;
   double sPHENIX_posx = anac.sPHENIX_posx;
@@ -23,7 +25,7 @@ void CompCrossData(std::string particle="pi0")
   double posy_diff = anac.posy_diff;
   
   double truthz_fraction = 2.7916; 
-  TFile *f1 = new TFile(Form("/sphenix/user/samfred/run25/ppg11/histmaking/yields_with_prob/data_%syields.root",particle.c_str()),"read");
+  TFile *f1 = new TFile(Form("/sphenix/user/samfred/run25/ppg11/histmaking/yields_without_prob_1GeV/data_%syields.root",particle.c_str()),"read");
   TH1D  *h1 = (TH1D*) f1->Get(Form("%syields",particle.c_str()));
   //h1->Scale(truthz_fraction);
 
@@ -32,21 +34,23 @@ void CompCrossData(std::string particle="pi0")
   double dy = 2.0;
   double br = (particle=="pi0") ? 0.98823 : 1;
   double norm = 2*M_PI;
+  double mbdeff = 0.7; 
 
-  TFile *f2 = new TFile(Form("eff_output_noreweight_pythiaMB_%s.root",particle.c_str()),"read");
+  TFile *f2 = new TFile(Form("/sphenix/user/samfred/run25/ppg11/CrossSectionClosure/eff_output_noreweight_pythiaMB_%s.root",particle.c_str()),"read");
   TH1D* h2 = (TH1D*) f2->Get("heff");
   
-  std::string fitfilename = (particle == "pi0") ? "fit_pythiamb_cross_section_pi0.root" : "fit_pythiamb_cross_section_tsallis_eta.root";
+  std::string fitfilename = (particle == "pi0") ? "/sphenix/user/samfred/run25/ppg11/CrossSectionClosure/fit_pythiamb_cross_section_pi0.root" : "/sphenix/user/samfred/run25/ppg11/CrossSectionClosure/fit_pythiamb_cross_section_tsallis_eta.root";
   TFile *f_fit = new TFile(fitfilename.c_str(),"read");
   TF1* fitw = (TF1*) f_fit->Get("f_pTdNdpt");
   TF1* fit = (TF1*) f_fit->Get("fit_restricted");
 
-  TFile *ft = new TFile(Form("hist_truth_noreweight_%s_MB.root",particle.c_str()),"read");
-  TH1D* htruth = (TH1D*) ft->Get("heff_sp_pt_den_fine");
+  TFile *ft = new TFile(Form("/sphenix/user/samfred/run25/ppg11/CrossSectionClosure/hist_truth_noreweight_%s_MB.root",particle.c_str()),"read");
+  TH1D* htruth = (TH1D*) ft->Get("heff_sp_pt_truth");
   htruth->Scale(truthz_fraction);
 
-  TGraphErrors *gr = new TGraphErrors();
+  TGraphErrors *gn = new TGraphErrors();
   TGraphErrors *grtruth = new TGraphErrors();
+  TGraphErrors *gc = new TGraphErrors();
 
   int ip=0;
   for(int i=1; i <= h1->GetNbinsX(); ++i){
@@ -61,17 +65,24 @@ void CompCrossData(std::string particle="pi0")
     double num = fitw->Integral(ptlow, pthigh);
     double den = fit->Integral(ptlow, pthigh);
     double meanpt = num/den; 
-    double corr = h2->GetBinContent(i);
     
-    double normalization = lumidata * dy * br * norm * dpt * meanpt * corr;
+    double normalization = lumidata * dy * br * norm * dpt * meanpt * mbdeff;
     
     yield = yield/normalization;
     yielderr = yielderr/normalization;
 
-    gr->SetPoint(ip,ptpos, yield);
-    gr->SetPointError(ip, dpt/2, yielderr);
+    gn->SetPoint(ip,ptpos, yield);
+    gn->SetPointError(ip, dpt/2, yielderr);
+    
+    double corr = h2->GetBinContent(i);
+    double correrr = h2->GetBinError(i);
+    gc->SetPoint(ip,ptpos,corr);
+    gc->SetPointError(ip,dpt/2,correrr);
+
     ip++;
   }
+  
+  TGraphErrors * gr = getGraphRatio(gn,gc);
 
   ip=0;
   for(int i=1; i <= htruth->GetNbinsX(); ++i){
@@ -110,7 +121,7 @@ void CompCrossData(std::string particle="pi0")
   f1->Close();
   
   TGraphAsymmErrors *grphenix; 
-  TFile *filefit = new TFile(Form("cross_section_%s_fit.root",particle.c_str()),"read");
+  TFile *filefit = new TFile(Form("/sphenix/user/samfred/run25/ppg11/CrossSectionClosure/cross_section_%s_fit.root",particle.c_str()),"read");
   TF1 *fitc= (TF1*) filefit->Get("fit");
   fitc->SetNpx(1000);
   fitc->SetLineColor(kBlack);
@@ -118,7 +129,7 @@ void CompCrossData(std::string particle="pi0")
   TGraphErrors *gratio_sphenix = new TGraphErrors();
   TDirectory *dir;
   if(particle=="pi0"){
-    TFile *fphenix = new TFile("PHENIX_pi0_pp.root","read");
+    TFile *fphenix = new TFile("/sphenix/user/samfred/run25/ppg11/CrossSectionClosure/PHENIX_pi0_pp.root","read");
     dir = (TDirectory*) fphenix->Get("Figure 1d-2");
     grphenix = (TGraphAsymmErrors*) dir->Get("Graph1D_y2");
     TH1F* hist_e1= (TH1F*) dir->Get("Hist1D_y2_e1");
@@ -170,7 +181,7 @@ void CompCrossData(std::string particle="pi0")
     }
   }
   else if(particle=="eta"){
-    TFile *fphenix = new TFile("PHENIX_eta_pp.root","read");
+    TFile *fphenix = new TFile("/sphenix/user/samfred/run25/ppg11/CrossSectionClosure/PHENIX_eta_pp.root","read");
     dir = (TDirectory*) fphenix->Get("Figure 2-10");
     grphenix = (TGraphAsymmErrors*) dir->Get("Graph1D_y1");
     TH1F* hist_eplus = (TH1F*) dir->Get("Hist1D_y1_e1plus");
@@ -196,7 +207,7 @@ void CompCrossData(std::string particle="pi0")
     }
     int np1 = grphenix->GetN();
 
-    TFile *fphenix2 = new TFile("PHENIX_eta_pp_v1.root","read");
+    TFile *fphenix2 = new TFile("/sphenix/user/samfred/run25/ppg11/CrossSectionClosure/PHENIX_eta_pp_v1.root","read");
     TDirectory *dir2 = (TDirectory*) fphenix2->Get("Figure 12.1");
     TGraphAsymmErrors *grphenix2 = (TGraphAsymmErrors*) dir2->Get("Graph1D_y1");
     TH1F* hist2_e1= (TH1F*) dir2->Get("Hist1D_y1_e1");
@@ -365,5 +376,5 @@ void CompCrossData(std::string particle="pi0")
   pad1->Draw();
   c1->Modified();
   c1->Update();
-  c1->SaveAs(Form("plots/cross_data_%s.pdf",particle.c_str()));
+  c1->SaveAs(Form("/sphenix/user/samfred/run25/ppg11/CrossSectionClosure/plots/cross_data_%s.pdf",particle.c_str()));
 }

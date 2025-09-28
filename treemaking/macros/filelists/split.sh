@@ -1,7 +1,7 @@
 #!/bin/bash
-dir="pythia_MB"
+dir=$1
 mkdir -p $dir
-split -l 5 combined_dstlist.list temp_
+split -l 10 combined_dstlist.list temp_
 n=0
 for file in temp_*; do
   m=`printf "%05d\n" $n`

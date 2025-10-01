@@ -94,7 +94,7 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
   int binhigh = h->FindBin(plothigh);
   int nbins = binhigh - binlow;
   cout << "Low bin: " << binlow << " High bin: " << binhigh << " nbins: " << nbins << endl;
-  RooMsgService::instance().setSilentMode(true);
+  //RooMsgService::instance().setSilentMode(true);
   RooWorkspace *ws = new RooWorkspace("workspace");
   ws->factory("mass[0.0, 1.0]");
   ws->var("mass")->setRange(plotlow,plothigh);
@@ -123,88 +123,125 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
     if (pt >= 6) h->Rebin(2);
     if (pt >= 8) h->Rebin(2);
   }
-  // Fitting with RooFit
-  RooDataHist data("binnedData", "Binned dataset", RooArgSet(*(ws->var("mass"))), h);
-  RooPlot * plot = ws->var("mass")->frame(nbins);
-  data.plotOn(plot, RooFit::DataError(RooAbsData::Poisson),RooFit::Name("data"));
-
-  // Gaussian/double gaussian
-  RooRealVar mu("mean", "mean of gaussian",initialmean,initialmean-0.05,initialmean+0.05);
-  RooRealVar sigma1("sigma1", "width of gaussian", initialsigma, 0.005, 0.1); 
-  RooRealVar sigma2("sigma2", "width of gaussian", initialsigma*1.1, 0.001, 0.2);
-  RooGaussian * signal1 = new RooGaussian("signal1", "gaussian PDF", *(ws->var("mass")), mu, sigma1);
-  RooGaussian * signal2 = new RooGaussian("signal2", "gaussian PDF", *(ws->var("mass")), mu, sigma2);
-  RooRealVar gaussFrac("gaussFrac", "fraction of Gaussians", 0.5, 0, 1);
-  RooAddPdf * doubleGauss = new RooAddPdf("doubleGauss", "Double Gaussian", RooArgList(*signal1,*signal2), gaussFrac);
-
-  // Crystal Ball
-  RooRealVar x0("x0", "x0", 0, initialmean-0.05, initialmean+0.05);
-  RooRealVar sigma("sigma0", "sigma", initialsigma, 0.001, 0.2);
-  RooRealVar alpha("alpha", "alpha", 10, -100, 100); // Negative for a right-side tail
-  RooRealVar n("n", "n", 1, 0.1, 10);
-  RooCrystalBall * cb = new RooCrystalBall("crystalBall", "Crystal Ball PDF", *(ws->var("mass")), x0, sigma, alpha, n);
-
-  // polynomial/chebyshev background
-  RooRealVar A("a", "1st order coefficient",Astart,Alow,Ahigh);
-  RooRealVar B("b", "2nd order coefficient",Bstart,Blow,Bhigh);
-  RooRealVar C("c", "3rd order coefficient",-100,-1e9,1e9);
-  RooRealVar D("d", "4th order coefficient",0,-1e9,1e9);
-  RooPolynomial *line = new RooPolynomial( "line",  "first order polynomial",  *(ws->var("mass")), RooArgList(A));
-  RooPolynomial *poly2 = new RooPolynomial("poly2", "second order polynomial", *(ws->var("mass")), RooArgList(A,B));
-  RooPolynomial *poly3 = new RooPolynomial("poly3", "third order polynomial",  *(ws->var("mass")), RooArgList(A,B,C));
-  RooPolynomial *poly4 = new RooPolynomial("poly4", "fourth order polynomial", *(ws->var("mass")), RooArgList(A,B,C,D));
-  RooChebychev *cheb2 = new RooChebychev("cheb", "second order chebychev", *(ws->var("mass")), RooArgList(A,B));
-  RooChebychev *cheb3 = new RooChebychev("cheb", "third order chebychev",  *(ws->var("mass")), RooArgList(A,B,C));
-
-  
-  // Different choices for background and signal
+  RooHist * hpull;
+  double *ypull;
+  int numFitPar = 0;
+  int ndf = 0;
+  double chisq = 0;
+  int nFullBinsPull = 0;
+  int startbin;
+  int endbin;
+  int nBins;
+  const char * sigtype;
+  RooFitResult * res;
   RooGenericPdf * sig;
   RooGenericPdf * bkg;
-  const char * bkgtype = map_bkg[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
-  const char * sigtype = map_sig[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  // Fitting with RooFit
+  RooDataHist data("binnedData", "Binned dataset", RooArgSet(*(ws->var("mass"))), h);
+  RooPlot * plot;
 
-  if (strcmp("gauss",sigtype) == 0)       sig = (RooGenericPdf*) signal1;
-  if (strcmp("doublegauss",sigtype) == 0) sig = (RooGenericPdf*) doubleGauss;
-  if (strcmp("cb",sigtype) == 0)          sig = (RooGenericPdf*) cb;
-  
-  if (strcmp("line" ,bkgtype) == 0) bkg = (RooGenericPdf*) line;
-  if (strcmp("poly2",bkgtype) == 0) bkg = (RooGenericPdf*) poly2;
-  if (strcmp("poly3",bkgtype) == 0) bkg = (RooGenericPdf*) poly3;
-  if (strcmp("poly4",bkgtype) == 0) bkg = (RooGenericPdf*) poly4;
+  for (int trial = 0; trial < 3; trial++) {
+    numFitPar = 0;
+    ndf = 0;
+    chisq = 0;
+    nFullBinsPull = 0;
+    if (trial > 0 ) { initialmean *= 1.03;  initialsigma *= 0.5; }
+    plot = ws->var("mass")->frame(nbins);
+    data.plotOn(plot, RooFit::DataError(RooAbsData::Poisson),RooFit::Name("data"));
 
-  RooRealVar nsig("nsig", "signal count", 1000, 10, 1e8);
-  RooRealVar nbkg("nbkg", "background count", 100, 0, 1e8);
+    
+    // Gaussian/double gaussian
+    RooRealVar mu("mean", "mean of gaussian",initialmean,initialmean-0.05,initialmean+0.05);
+    RooRealVar sigma1("sigma1", "width of gaussian", initialsigma, 0.005, 0.1); 
+    RooRealVar sigma2("sigma2", "width of gaussian", initialsigma*1.1, 0.001, 0.2);
+    RooGaussian * signal1 = new RooGaussian("signal1", "gaussian PDF", *(ws->var("mass")), mu, sigma1);
+    RooGaussian * signal2 = new RooGaussian("signal2", "gaussian PDF", *(ws->var("mass")), mu, sigma2);
+    RooRealVar gaussFrac("gaussFrac", "fraction of Gaussians", 0.5, 0, 1);
+    RooAddPdf * doubleGauss = new RooAddPdf("doubleGauss", "Double Gaussian", RooArgList(*signal1,*signal2), gaussFrac);
 
-  RooAddPdf * model = new RooAddPdf("model", "signal + background", RooArgList(*sig,*bkg),RooArgList(nsig, nbkg));
-  ws->import(*model);
+    // Crystal Ball
+    RooRealVar x0("x0", "x0", 0, initialmean-0.05, initialmean+0.05);
+    RooRealVar sigma("sigma0", "sigma", initialsigma, 0.001, 0.2);
+    RooRealVar alpha("alpha", "alpha", 10, -100, 100); // Negative for a right-side tail
+    RooRealVar n("n", "n", 1, 0.1, 10);
+    RooCrystalBall * cb = new RooCrystalBall("crystalBall", "Crystal Ball PDF", *(ws->var("mass")), x0, sigma, alpha, n);
 
-  RooLinkedList* fitcmd = new RooLinkedList();
-  RooCmdArg opt1 = RooFit::Save(); fitcmd->Add(&opt1);
-  //RooCmdArg opt2 = RooFit::PrefitDataFraction(0.1); fitcmd->Add(&opt2);
-  RooCmdArg opt3 = RooFit::Minimizer("Minuit","minimize"); fitcmd->Add(&opt3);//"migradimproved");//);
-  RooCmdArg opt4 = RooFit::NumCPU(16, 0); fitcmd->Add(&opt4);
-  //RooCmdArg opt5 = RooFit::Range(h[i]->GetXaxis()->GetBinLowEdge(1), h[i]->GetXaxis()->GetBinUpEdge(h[i]->GetNbinsX())); fitcmd->Add(&opt5);
-  RooCmdArg opt5 = RooFit::Range(plotlow,plothigh); fitcmd->Add(&opt5);
-  RooCmdArg opt7 = RooFit::SumW2Error(kTRUE); fitcmd->Add(&opt7);
-  RooCmdArg opt8 = RooFit::Extended(kTRUE); fitcmd->Add(&opt8);
-  RooCmdArg opt9 = RooFit::Minos(kFALSE); fitcmd->Add(&opt9);
-  RooCmdArg opt10= RooFit::Hesse(kTRUE); fitcmd->Add(&opt10);//RooCmdArg::none();
-  //RooCmdArg opt11= RooFit::EvalErrorWall(kTRUE); fitcmd->Add(&opt11);//tRooCmdArg::none();
-  //RooCmdArg opt12= RooFit::Strategy(2); fitcmd->Add(&opt12);//tRooCmdArg::none();
-  //RooCmdArg opt13= RooFit::RecoverFromUndefinedRegions(3); fitcmd->Add(&opt13);//tRooCmdArg::none();
-  //RooCmdArg opt14= RooFit::BatchMode(kTRUE); fitcmd->Add(&opt14);//tRooCmdArg::none();
-  RooCmdArg opt15= RooFit::PrintEvalErrors(-1); fitcmd->Add(&opt15);//tRooCmdArg::none();
+    // polynomial/chebyshev background
+    RooRealVar A("a", "1st order coefficient",Astart,Alow,Ahigh);
+    RooRealVar B("b", "2nd order coefficient",Bstart,Blow,Bhigh);
+    RooRealVar C("c", "3rd order coefficient",-100,-1e9,1e9);
+    RooRealVar D("d", "4th order coefficient",0,-1e9,1e9);
+    RooPolynomial *line = new RooPolynomial( "line",  "first order polynomial",  *(ws->var("mass")), RooArgList(A));
+    RooPolynomial *poly2 = new RooPolynomial("poly2", "second order polynomial", *(ws->var("mass")), RooArgList(A,B));
+    RooPolynomial *poly3 = new RooPolynomial("poly3", "third order polynomial",  *(ws->var("mass")), RooArgList(A,B,C));
+    RooPolynomial *poly4 = new RooPolynomial("poly4", "fourth order polynomial", *(ws->var("mass")), RooArgList(A,B,C,D));
+    RooChebychev *cheb2 = new RooChebychev("cheb", "second order chebychev", *(ws->var("mass")), RooArgList(A,B));
+    RooChebychev *cheb3 = new RooChebychev("cheb", "third order chebychev",  *(ws->var("mass")), RooArgList(A,B,C));
 
-  RooFitResult * res = ws->pdf("model")->fitTo(data, *fitcmd);
+
+    // Different choices for background and signal
+    const char * bkgtype = map_bkg[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+    sigtype = map_sig[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+
+    if (strcmp("gauss",sigtype) == 0)       sig = (RooGenericPdf*) signal1;
+    if (strcmp("doublegauss",sigtype) == 0) sig = (RooGenericPdf*) doubleGauss;
+    if (strcmp("cb",sigtype) == 0)          sig = (RooGenericPdf*) cb;
+
+    if (strcmp("line" ,bkgtype) == 0) bkg = (RooGenericPdf*) line;
+    if (strcmp("poly2",bkgtype) == 0) bkg = (RooGenericPdf*) poly2;
+    if (strcmp("poly3",bkgtype) == 0) bkg = (RooGenericPdf*) poly3;
+    if (strcmp("poly4",bkgtype) == 0) bkg = (RooGenericPdf*) poly4;
+
+    RooRealVar nsig("nsig", "signal count", 1000, 10, 1e8);
+    RooRealVar nbkg("nbkg", "background count", 100, 0, 1e8);
+
+    RooAddPdf * model = new RooAddPdf("model", "signal + background", RooArgList(*sig,*bkg),RooArgList(nsig, nbkg));
+    ws->import(*model);
+
+    RooLinkedList* fitcmd = new RooLinkedList();
+    RooCmdArg opt1 = RooFit::Save(); fitcmd->Add(&opt1);
+    //RooCmdArg opt2 = RooFit::PrefitDataFraction(0.1); fitcmd->Add(&opt2);
+    RooCmdArg opt3 = RooFit::Minimizer("Minuit","minimize"); fitcmd->Add(&opt3);//"migradimproved");//);
+    RooCmdArg opt4 = RooFit::NumCPU(16, 0); fitcmd->Add(&opt4);
+    //RooCmdArg opt5 = RooFit::Range(h[i]->GetXaxis()->GetBinLowEdge(1), h[i]->GetXaxis()->GetBinUpEdge(h[i]->GetNbinsX())); fitcmd->Add(&opt5);
+    RooCmdArg opt5 = RooFit::Range(plotlow,plothigh); fitcmd->Add(&opt5);
+    RooCmdArg opt7 = RooFit::SumW2Error(kTRUE); fitcmd->Add(&opt7);
+    RooCmdArg opt8 = RooFit::Extended(kTRUE); fitcmd->Add(&opt8);
+    RooCmdArg opt9 = RooFit::Minos(kFALSE); fitcmd->Add(&opt9);
+    RooCmdArg opt10= RooFit::Hesse(kTRUE); fitcmd->Add(&opt10);//RooCmdArg::none();
+    //RooCmdArg opt11= RooFit::EvalErrorWall(kTRUE); fitcmd->Add(&opt11);//tRooCmdArg::none();
+    //RooCmdArg opt12= RooFit::Strategy(2); fitcmd->Add(&opt12);//tRooCmdArg::none();
+    //RooCmdArg opt13= RooFit::RecoverFromUndefinedRegions(3); fitcmd->Add(&opt13);//tRooCmdArg::none();
+    //RooCmdArg opt14= RooFit::BatchMode(kTRUE); fitcmd->Add(&opt14);//tRooCmdArg::none();
+    RooCmdArg opt15= RooFit::PrintEvalErrors(-1); fitcmd->Add(&opt15);//tRooCmdArg::none();
+
+    res = ws->pdf("model")->fitTo(data, *fitcmd);
+    ws->pdf("model")->plotOn(plot,Name("model"),LineColor(kRed),LineWidth(2),LineStyle(kSolid));
+    ws->pdf("model")->plotOn(plot,Name("Sig"),Components(RooArgSet(*sig)),LineColor(kGreen+2),LineWidth(2),LineStyle(kSolid),FillStyle(3001),FillColor(kGreen+1),DrawOption("LF"));
+    ws->pdf("model")->plotOn(plot,Name("Bkg"),Components(RooArgSet(*bkg)),LineColor(kBlue+2),LineStyle(kDashed),LineWidth(2));
+
+    hpull = plot->pullHist("data","model");
+    ypull = hpull->GetY();
+    startbin = hpull->GetXaxis()->FindBin(plotlow);
+    endbin = hpull->GetXaxis()->FindBin(plothigh);
+    nBins = hpull->GetN(); 
+    cout << "before-- chisq: " << chisq << " ndf: " << ndf << " chisq/ndf: " << chisq/ndf << endl;
+    for(int i = 0; i < nBins; i++) {
+      if (ypull[i] == 0 || std::isnan(ypull[i])) continue;
+      chisq += TMath::Power(ypull[i],2);
+      nFullBinsPull++;
+    }
+    numFitPar = res->floatParsFinal().getSize();
+    ndf = nFullBinsPull - numFitPar;
+    cout << "after-- chisq: " << chisq << " ndf: " << ndf << " chisq/ndf: " << chisq/ndf << endl;
+
+    if (chisq/ndf < 8 || trial == 2) break;
+    plot->remove("model");
+    plot->remove("Sig");
+    plot->remove("Bkg");
+  }
+
   ws->import(*res);
-
-
-
-  ws->pdf("model")->plotOn(plot,Name("model"),LineColor(kRed),LineWidth(2),LineStyle(kSolid));
-  ws->pdf("model")->plotOn(plot,Name("Sig"),Components(RooArgSet(*sig)),LineColor(kGreen+2),LineWidth(2),LineStyle(kSolid),FillStyle(3001),FillColor(kGreen+1),DrawOption("LF"));
-  ws->pdf("model")->plotOn(plot,Name("Bkg"),Components(RooArgSet(*bkg)),LineColor(kBlue+2),LineStyle(kDashed),LineWidth(2));
-
-
   TPad * pplot = new TPad("pplot","",0,0.33,1,1);
   //TPad * pplot = new TPad("pplot","",0,0,1,1);
   pplot->SetBottomMargin(0.13);
@@ -266,7 +303,6 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
 
   ppull->cd();
   gPad->SetTicks(1,1);
-  RooHist * hpull = plot->pullHist("data","model");
   hpull->SetMarkerSize(0.7);
   RooPlot* pullFrame = ws->var("mass")->frame(Title(" ")) ;
   pullFrame->addPlotable(hpull,"P") ;
@@ -292,31 +328,17 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
   pullFrame->GetXaxis()->SetTickSize(0.03);
   pullFrame->Draw();
 
-  double chisq = 0;
-  int nFullBinsPull = 0;
-  int startbin = hpull->GetXaxis()->FindBin(plotlow);
-  int endbin = hpull->GetXaxis()->FindBin(plothigh);
-  int nBins = hpull->GetN(); 
-  double *ypull = hpull->GetY();
   if (startbin < 0 || endbin >= startbin + nBins) {
     std::cout << "startbin / endbin / nBins : " << startbin << ", " << endbin << ", " << nBins << std::endl;
     std::cerr << "Error: startbin or endbin is out of range." << std::endl;
     //return;
   }
 
-  for(int i = 0; i < nBins; i++) {
-    if (ypull[i] == 0 || std::isnan(ypull[i])) continue;
-    chisq += TMath::Power(ypull[i],2);
-    nFullBinsPull++;
-  }
-  int numFitPar = res->floatParsFinal().getSize();
-  int ndf = nFullBinsPull - numFitPar;
 
   TLine *l1 = new TLine(plotlow,0,plothigh,0);
   l1->SetLineStyle(9);
   l1->Draw("same");
 
-  cout << "chisq: " << chisq << " ndf: " << ndf << " chisq/ndf: " << chisq/ndf << endl;
 
 
   pplot->cd();

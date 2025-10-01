@@ -14,7 +14,8 @@ root -b -l -q "onefitmass.C(\"pi0\",\"MC\",\"MB\",3)"
 root -b -l -q "onefitmass.C(\"pi0\",\"MC\",\"MB\",4)"
 root -b -l -q "onefitmass.C(\"pi0\",\"MC\",\"MB\",5)"
 root -b -l -q "onefitmass.C(\"pi0\",\"MC\",\"MB\",6)"
+root -b -l -q "onefitmass.C(\"pi0\",\"MC\",\"MB\",7)"
 cd ..
 bash plotdata.sh pi0
-bash doall.sh pi0 1
+bash plotcross.sh pi0 1
 cd --

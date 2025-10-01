@@ -52,6 +52,9 @@ class ana {
     static const int nPtBinsFine = 30;
     static constexpr double ptBinsFine[nPtBinsFine+1] = {0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
     virtual Int_t findBin(double value);
+    static const int nAlphaBins = 3;
+    static constexpr double alphaBins[nAlphaBins+1] = {0, 0.08, 0.2, 1};
+    virtual Int_t findAlphaBin(double value);
 
   private:
     bool m_truth_found_decay{true};

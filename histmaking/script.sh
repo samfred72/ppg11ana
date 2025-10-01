@@ -23,7 +23,8 @@ echo "runnumber..."
 echo ${SECTION}
 echo "trigger..."
 echo $TRIGGER
-root "truthhistmaker.C(${SECTION},\"${TRIGGER}\")"
+#root "truthhistmaker.C(${SECTION},\"${TRIGGER}\")"
+root "truthhistmaker_smeartest.C(${SECTION},\"${TRIGGER}\")"
 
 echo all done
 echo "script done"

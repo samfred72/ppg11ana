@@ -48,4 +48,13 @@ Int_t ana::findBin(double value)
   }
   return -1;
 }
+Int_t ana::findAlphaBin(double value)
+{
+  for (int i = 0; i < nAlphaBins; ++i) {
+    if (value >= alphaBins[i] && value < alphaBins[i + 1]) {
+      return  i;
+    }
+  }
+  return -1;
+}
 

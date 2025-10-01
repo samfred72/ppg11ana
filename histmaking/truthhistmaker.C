@@ -4,7 +4,7 @@
 
 void truthhistmaker(int section = 0, const char * type = "MB")
 {
-  gSystem->Load("../Headers/libMyDict.so");
+  //gSystem->Load("../Headers/libMyDict.so");
 
   int runnum = 28; 
   const char *dir = Form("/sphenix/tg/tg01/jets/samfred/run25/pythia_%s_hadded",type);
@@ -13,10 +13,10 @@ void truthhistmaker(int section = 0, const char * type = "MB")
   bool doprob = false;
   bool dosmear = true;
   // Scales for MC smearing
-  float escale = 1.03;
-  float econst = 0.1;
-  float efrac = 0.1;
-  float pfrac = 0.001;
+  float pfrac = 0.0004;
+  float efrac = 0.04;
+  float econst = 0.18;
+  float escale = 1.026;
 
   TFile *f = new TFile(Form("%s",filename.c_str()),"read");
   TTree *t = (TTree*) f->Get("towerntup");
@@ -28,6 +28,7 @@ void truthhistmaker(int section = 0, const char * type = "MB")
 
   ana anaclone;
   const int nPtBins = anaclone.nPtBins;
+  const int nAlphaBins = anaclone.nAlphaBins;
   double pi0mass = anaclone.pi0mass;
   double etamass = anaclone.etamass;
 
@@ -45,6 +46,13 @@ void truthhistmaker(int section = 0, const char * type = "MB")
   TH1D * ptds = new TH1D("ptds",";pt;counts",256,0,10);
   TH1D * ptsu = new TH1D("ptsu",";pt;counts",256,0,10);
   TH1D * ptdu = new TH1D("ptdu",";pt;counts",256,0,10);
+  TH1D * hadist = new TH1D("hadist",";alpha;counts",100,0,1);
+  TH1D * halpha[nPtBins][nAlphaBins];
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < nAlphaBins; j++) {
+      halpha[i][j] = new TH1D(Form("halpha%i_%i",i,j),";mass;counts",100,0,0.3);
+    }
+  }
   TRandom rndm;
   TH1D *hmaxpt = new TH1D("hmaxpt",";max p_{T,#pi^0}^{truth};weighted counts;",64,0,64);
   Long64_t nentries = t->GetEntriesFast();
@@ -144,17 +152,26 @@ void truthhistmaker(int section = 0, const char * type = "MB")
       else {
         if(pt1 < ptcut || pt2 < ptcut) continue;
       }
-      float energyimbal = (dosmear ? abs(pho1fl.E() - pho2fl.E())/(pho1fl.E() + pho2fl.E()) : diphoton_energyimbal[ip]);
-      if(energyimbal > 0.6) continue;
       if (doprob) {
         if(photon_prob[idx_photon1[ip]] < 0.05 || photon_prob[idx_photon2[ip]] < 0.05) continue;
       }
+      float energyimbal = (dosmear ? abs(pho1fl.E() - pho2fl.E())/(pho1fl.E() + pho2fl.E()) : diphoton_energyimbal[ip]);
+     
+      float mass = (dosmear ? phofl.M() : pho->M()); 
+      
+      // alpha hists
+      int bin = anaclone.findBin(pt);
+      if (bin < 0) continue;
+      int pbin = (bin < 4 ? 0 : 1);
+      int abin = anaclone.findAlphaBin(energyimbal);
+      hadist->Fill(energyimbal);
+      if (abs(eta1) < 0.3 && abs(eta2) < 0.3) {
+        halpha[pbin][abin]->Fill(mass);
+      }
+      if(energyimbal > 0.6) continue;
 
       
-      float mass = (dosmear ? phofl.M() : pho->M()); 
       if (dosmear) pt = phofl.Pt();
-      int bin = (int)pt;
-      if (bin < 0 || bin >= nPtBins) continue;
       
       hmass[bin]->Fill(mass);
       hmass_pi0[bin]->Fill(mass);
@@ -173,4 +190,10 @@ void truthhistmaker(int section = 0, const char * type = "MB")
   ptds->Write();
   ptsu->Write();
   ptdu->Write();
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 10; j++) {
+      halpha[i][j]->Write();
+    }
+  }
+  hadist->Write();
 }

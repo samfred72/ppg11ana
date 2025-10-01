@@ -21,6 +21,7 @@ void data_histmaker(int runnum=48349)
 
   ana anaclone;
   const int nPtBins = anaclone.nPtBins;
+  const int nAlphaBins = anaclone.nAlphaBins;
   double pi0mass = anaclone.pi0mass;
   double etamass = anaclone.etamass;
 
@@ -86,6 +87,14 @@ void data_histmaker(int runnum=48349)
   TH1D * hphoton4 = new TH1D("hphoton4",";p_{T}^{max};counts",1000,0,100);
   TH1D * hphoton5 = new TH1D("hphoton5",";p_{T}^{max};counts",1000,0,100);
 
+  // alpha checks
+  TH1D * halpha[nPtBins][nAlphaBins];
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < nAlphaBins; j++) {
+      halpha[i][j] = new TH1D(Form("halpha%i_%i",i,j),";mass;counts",100,0,0.3);
+    }
+  }
+
   TH2D * hetaphi = new TH2D(Form("hetaphi"),";#eta;#phi",96,-1.1,1.1,256,-M_PI,M_PI);
   TH2D * hpi0_etaphi = new TH2D(Form("hpi0_etaphi"),";#eta;#phi",96,-1.1,1.1,256,-M_PI,M_PI);
   TH1D * hpt = new TH1D(Form("hpt"),";p_{T,#gamma};counts",20,0,20);
@@ -135,15 +144,26 @@ void data_histmaker(int runnum=48349)
       if(eta1 > etamax || eta1 < etamin) continue;
       if(eta2 > etamax || eta2 < etamin) continue;
       if(pt1 < ptcut || pt2 < ptcut) continue;
-
-      if(diphoton_energyimbal[ip] > 0.6) continue;
-
       if (doprob) {
         if(photon_prob[idx_photon1[ip]] < 0.05 || photon_prob[idx_photon2[ip]] < 0.05) continue;
       }
+
+      int bin = anaclone.findBin(pt);
+      int pbin;
+      if (pt < 2.5) pbin = 0;
+      else if (pt < 3.5) pbin = 1;
+      else pbin = 2;
+      int abin = anaclone.findAlphaBin(diphoton_energyimbal[ip]);
+      if (ScaledTriggerBit[10] && abs(eta1) < 0.3 && abs(eta2) < 0.3 && abs(pho->Eta()) < 0.3) {
+        if (bin >= 0 && bin < nPtBins) {
+          halpha[pbin][abin]->Fill(mass);
+        }
+      }
+
+      if(diphoton_energyimbal[ip] > 0.6) continue;
+
       
       if (pho->M() < 0.16 && pho->M() > 0.11) hpi0_etaphi->Fill(pho->Eta(),pho->Phi());
-      int bin = (int)pt;
       if (ScaledTriggerBit[10]) {
         if(bin >= 0 && bin < nPtBins){
           hmass_mbd[bin]->Fill(mass);
@@ -233,4 +253,10 @@ void data_histmaker(int runnum=48349)
   hetaphi->Write();
   hpi0_etaphi->Write();
   hpt->Write();
+  
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < nAlphaBins; j++) {
+      halpha[i][j]->Write();
+    }
+  }
 }

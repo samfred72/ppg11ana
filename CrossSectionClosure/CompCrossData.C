@@ -30,7 +30,7 @@ void CompCrossData(std::string particle="pi0",bool smear = 0)
   //h1->Scale(truthz_fraction);
 
   double lumidata = 0.03228*1e+09;
-  double lumi = 100*1e6 / 42.0;
+  double lumi = 200*1e6 / 42.0;
   double dy = 2.0;
   double br = (particle=="pi0") ? 0.98823 : 1;
   double norm = 2*M_PI;
@@ -305,7 +305,7 @@ void CompCrossData(std::string particle="pi0",bool smear = 0)
   fitc->Draw("same");
   
   drawText("#bf{#it{sPHENIX}} Internal",sPHENIX_posx-0.03,sPHENIX_posy,1,22);
-  drawText("Pythia8 MB #kern[-0.5]{#sqrt{s}} = 200 GeV",sPHENIX_posx-0.03,sPHENIX_posy-posy_diff,1,19);
+  drawText("#it{p+p} #kern[-0.5]{#sqrt{s}} = 200 GeV",sPHENIX_posx-0.03,sPHENIX_posy-posy_diff,1,19);
 
   TLegend *l = new TLegend(0.60,0.45,0.85,0.77);
   SetLegendStyle(l);
@@ -354,8 +354,8 @@ void CompCrossData(std::string particle="pi0",bool smear = 0)
   gratio_phenix->GetYaxis()->CenterTitle();
   gratio_phenix->GetYaxis()->SetTitleOffset(0.7);
   gratio_phenix->GetXaxis()->SetTitleOffset(1.1);
-  gratio_phenix->GetYaxis()->SetLimits(0,2);
-  gratio_phenix->GetYaxis()->SetRangeUser(0,1.99);
+  gratio_phenix->GetYaxis()->SetLimits(0,3);
+  gratio_phenix->GetYaxis()->SetRangeUser(0,2.99);
   gratio_phenix->GetXaxis()->SetLimits(0,10);
   gratio_phenix->GetXaxis()->SetRangeUser(0,10);
   gratio_sphenix->GetXaxis()->SetLimits(0,10);

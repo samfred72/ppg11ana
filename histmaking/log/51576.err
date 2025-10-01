@@ -1,0 +1,101 @@
+In file included from input_line_8:1:
+In file included from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/data_histmaker.C:2:
+In file included from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/ana.cxx:2:
+In file included from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/ana.h:10:
+/sphenix/user/jpark4/Utility/Style_jaebeom.h:321:3: warning: expression result unused [-Wunused-value]
+  TH1::SetDefaultSumw2;
+  ^~~~~~~~~~~~~~~~~~~~
+/sphenix/user/jpark4/Utility/Style_jaebeom.h:334:3: warning: expression result unused [-Wunused-value]
+  TH1::SetDefaultSumw2;
+  ^~~~~~~~~~~~~~~~~~~~
+/sphenix/user/jpark4/Utility/Style_jaebeom.h:348:3: warning: expression result unused [-Wunused-value]
+  TH1::SetDefaultSumw2;
+  ^~~~~~~~~~~~~~~~~~~~
+
+ *** Break *** segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+#0  0x000014a99ccd8efa in wait4 () from /usr/lib64/libc.so.6
+#1  0x000014a99cc4b7e3 in do_system () from /usr/lib64/libc.so.6
+#2  0x000014a99d6fc4ea in TUnixSystem::Exec (this=0x17fa320, shellcmd=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/core/unix/src/TUnixSystem.cxx:2157
+#3  TUnixSystem::StackTrace (this=0x17fa320) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/core/unix/src/TUnixSystem.cxx:2448
+#4  0x000014a99d6fbe34 in TUnixSystem::DispatchSignals (this=0x17fa320, sig=kSigSegmentationViolation) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/core/unix/src/TUnixSystem.cxx:3668
+#5  <signal handler called>
+#6  0x000014a99becbc56 in frombuf (buf=
+0x7170bd8: 0x7249068 ">\2760!<\263L'>\236\033\267>\033\263\337>\300z\v>\2421\232>\241<\016>|\353\263=\251zi=\253e\353>\300O\212>\201\370\244>\201\t\023=*\334!=\330\320+;\001A\212>\037\\\337>X\310+>\020N\355>\223qo;\273\275\377=K\260\203=\037\"\371>\247`\b=\342\365,=\257\315M=\200\0269>Y\334u>\266=\254>\f\277\317>\245\246\351>\003\2756=\364|\027<\357k\211=S\023\305>\235\261X=\3127Q>!\234\217>\352\237Q>3\377\305>\227\nM>b\230n>)~?=\005\032*=\231T\255>\3047\271>CH\345>\2372/>U\227|=J\232\213"..., x=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/core/base/inc/Bytes.h:385
+#7  TBufferFile::ReadFastArray (this=<optimized out>, f=<optimized out>, n=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/io/io/src/TBufferFile.cxx:1393
+#8  TBufferFile::ReadFastArray (this=0x7170bb0, f=<optimized out>, n=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/io/io/src/TBufferFile.cxx:1382
+#9  0x000014a97dfe4909 in TBranch::GetEntry (this=<optimized out>, entry=<optimized out>, getall=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/tree/tree/src/TBranch.cxx:1753
+#10 0x000014a97e059a78 in operator() (__closure=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/tree/tree/src/TTree.cxx:5661
+#11 TTree::GetEntry (this=0x410c7d0, entry=<optimized out>, getall=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/tree/tree/src/TTree.cxx:5736
+#12 0x000014a99cf7b4c5 in ?? ()
+#13 0x0000000000000800 in ?? ()
+#14 0x000014a99cfd6a38 in ?? ()
+#15 0x3f59999a3f19999a in ?? ()
+#16 0x000000073d4ccccd in ?? ()
+#17 0x4044000000000000 in ?? ()
+#18 0x3ff0000000000000 in ?? ()
+#19 0x403e000000000000 in ?? ()
+#20 0x4057400000000000 in ?? ()
+#21 0x3ff0000000000000 in ?? ()
+#22 0x3fa999999999999a in ?? ()
+#23 0x3fe999999999999a in ?? ()
+#24 0x3fc147ae147ae148 in ?? ()
+#25 0x3fe199999999999a in ?? ()
+#26 0x3fa999999999999a in ?? ()
+#27 0x3fc999999999999a in ?? ()
+#28 0x3fd999999999999a in ?? ()
+#29 0x3fe6666666666666 in ?? ()
+#30 0x0000000002799e01 in ?? ()
+#31 0x000014a99d8d8ed8 in vtable for TObject () from /cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/bin/../lib/libCore.so
+#32 0x0000000000000000 in ?? ()
+===========================================================
+
+
+The lines below might hint at the cause of the crash. If you see question
+marks as part of the stack trace, try to recompile with debugging information
+enabled and export CLING_DEBUG=1 environment variable before running.
+You may get help by asking at the ROOT forum https://root.cern/forum
+preferably using the command (.forum bug) in the ROOT prompt.
+Only if you are really convinced it is a bug in ROOT then please submit a
+report at https://root.cern/bugs or (preferably) using the command (.gh bug) in
+the ROOT prompt. Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#6  0x000014a99becbc56 in frombuf (buf=
+0x7170bd8: 0x7249068 ">2760!<263L'>236033267>033263337>300zv>2421232>241<016>|353263=251zi=253e353>300O212>201370244>201t023=*334!=330320+;001A212>037\337>X310+>020N355>223qo;273275377=K260203=037"371>247`b=342365,=257315M=2000269>Y334u>266=254>f277317>245246351>0032756=364|027<357k211=S023305>235261X=3127Q>!234217>352237Q>3377305>227nM>b230n>)~?=005032*=231T255>3047271>CH345>2372/>U227|=J232213"..., x=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/core/base/inc/Bytes.h:385
+#7  TBufferFile::ReadFastArray (this=<optimized out>, f=<optimized out>, n=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/io/io/src/TBufferFile.cxx:1393
+#8  TBufferFile::ReadFastArray (this=0x7170bb0, f=<optimized out>, n=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/io/io/src/TBufferFile.cxx:1382
+#9  0x000014a97dfe4909 in TBranch::GetEntry (this=<optimized out>, entry=<optimized out>, getall=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/tree/tree/src/TBranch.cxx:1753
+#10 0x000014a97e059a78 in operator() (__closure=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/tree/tree/src/TTree.cxx:5661
+#11 TTree::GetEntry (this=0x410c7d0, entry=<optimized out>, getall=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/tree/tree/src/TTree.cxx:5736
+#12 0x000014a99cf7b4c5 in ?? ()
+#13 0x0000000000000800 in ?? ()
+#14 0x000014a99cfd6a38 in ?? ()
+#15 0x3f59999a3f19999a in ?? ()
+#16 0x000000073d4ccccd in ?? ()
+#17 0x4044000000000000 in ?? ()
+#18 0x3ff0000000000000 in ?? ()
+#19 0x403e000000000000 in ?? ()
+#20 0x4057400000000000 in ?? ()
+#21 0x3ff0000000000000 in ?? ()
+#22 0x3fa999999999999a in ?? ()
+#23 0x3fe999999999999a in ?? ()
+#24 0x3fc147ae147ae148 in ?? ()
+#25 0x3fe199999999999a in ?? ()
+#26 0x3fa999999999999a in ?? ()
+#27 0x3fc999999999999a in ?? ()
+#28 0x3fd999999999999a in ?? ()
+#29 0x3fe6666666666666 in ?? ()
+#30 0x0000000002799e01 in ?? ()
+#31 0x000014a99d8d8ed8 in vtable for TObject () from /cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/bin/../lib/libCore.so
+#32 0x0000000000000000 in ?? ()
+===========================================================
+
+

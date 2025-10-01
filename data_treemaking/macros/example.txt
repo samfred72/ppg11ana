@@ -1,0 +1,1 @@
+bash makequeuelist.sh -r 67538 -p new -c newcdbtag_v005 -d DST_CALO -D initialruns

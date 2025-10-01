@@ -1,0 +1,251 @@
+sphnx1028.sdcc.bnl.gov
+rsyncing from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking
+running: /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/script_data.sh 51606
+LD_LIBRARY_PATH now /sphenix/user/samfred/run25/install//lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/lib64:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/binutils/2.40-acaab/x86_64-el9/lib:.:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/lib64:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/utils/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/lib64:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/lhapdf-5.9.1/lib:/usr/local/lib64:/usr/lib64
+PATH now /sphenix/user/samfred/run25/install//bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/binutils/2.40-acaab/x86_64-el9/bin:.:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/utils/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+SINGULARITY_CACHEDIR=/home/condor/local/sphnx/execute/dir_2441353
+_CONDOR_ANCESTOR_317652=317699:1756523315:1303912541
+_CONDOR_CHIRP_CONFIG=/home/condor/local/sphnx/execute/dir_2441353/.chirp.config
+_CONDOR_JOB_IWD=/sphenix/user/samfred/run25/ppg11/histmaking
+G4ENSDFSTATEDATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/G4ENSDFSTATE2.3
+_CONDOR_MACHINE_AD=/home/condor/local/sphnx/execute/dir_2441353/.machine.ad
+ROOT_MAX_THREADS=1
+NUMEXPR_NUM_THREADS=1
+CUBACORES=1
+_CHIRP_DELAYED_UPDATE_PREFIX=Chirp*
+OMP_THREAD_LIMIT=1
+G4PIIDATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/G4PII1.3
+NO_AT_BRIDGE=1
+G4_MAIN=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04
+COMPILER_PATH=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9
+ROOT_INCLUDE_PATH=./:/sphenix/user/samfred/run25/install//include:/sphenix/user/samfred/run25/install//include/caloana:/sphenix/user/samfred/run25/install//include/qa_centrality:/sphenix/user/samfred/run25/install//include/mbdana:/sphenix/user/samfred/run25/install//include/centrality:/sphenix/user/samfred/run25/install//include/Event:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4mbd:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/fmt:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/ffarawobjects:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/JSON:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/calotreegen:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/torch:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4detectors:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/kineto:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4decayer:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/kfparticleqa:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/phfield:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/LHAPDF:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/readdigitalcurrents:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/c10:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/calovalid:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/oneapi:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/DDCond:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4tracking:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/litecaloeval:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4intt:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/phool:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/boost:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/Pythia8Plugins:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/calib_emc_pi0:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/hijingflipafterburner:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/ffaobjects:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/EvtGenBase:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/flowafterburner:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/google:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4tpc:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/caffe2:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/EvtGenExternal:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/fp16:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/ffamodules:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/uspin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/Herwig:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/genfitexp:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/XML:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/fbgemm:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/DDAlign:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4mvtx:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/kfparticle_sphenix:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/fun4all:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/intt:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/eventdisplay:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/EvtGen:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/Evaluator:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/tpc:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/GenFit:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/prototype4:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/caloembedding:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/EvtGenModels:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/fastjet:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/DDG4:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/mbd:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/tbb:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/phgeom:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4epd:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/oncal:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/pybind11:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/tpcdistgenerator:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/cdbobjects:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4micromegas:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4eval:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/jetbackground:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/micromegas:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/hftrackefficiency:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/inttrawhitqa:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/centrality:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/epd:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/caloreco:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/HepMC:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/CLHEP:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/Acts:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4histos:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/eventplaneinfo:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/fillspacechargemaps:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/phhepmc:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/trackingqa:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/qautils:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/trackreco:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4ohcal:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/tpcdvcalib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/zdcinfo:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/phpythia8:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/fun4allutils:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/tpcqa:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/Pythia8:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/DDRec:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/DDDigi:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4ihcal:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/frog:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/eigen3:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/tensorpipe:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/sphenixnpc:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/siscone:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/pmonitor:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/calobase:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/ActsExamples:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4gdml:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/mvtx_decoder:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/ROOT:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/phparameter:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/rsa:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/fun4allraw:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/trackbase_historic:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4jets:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/jetqa:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/phoolraw:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4calo:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/mvtxrawhitqa:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/HepMC3:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/calowaveformsim:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4caloprototype:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/pdbcalbase:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/gsl:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/nodedump:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/emcnoisytowerfinder:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/ActsFatras:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/ffarawmodules:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/Event:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/prototype3:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/fermimotionafterburner:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/Photos:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/xingshiftcal:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/trackbase:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/jetdstskimmer:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/clusteriso:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/asmjit:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/particleflowreco:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/tpchittrackdisplay:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/caloana:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/calotrigger:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/nopayloadclient:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/trackermillepedealignment:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/DD4hep:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4trackfastsim:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/prototype2:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/ATen:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4main:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/Tauola:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/inttcalib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/reactionplaneafterburner:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/globalqa:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/tpccalib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/DDSegmentation:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/decayfinder:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/compressclus:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/simqa_modules:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/resonancejettagging:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4centrality:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/mvtx:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/nlohmann:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/localpoloffmon:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/DDEve:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/Parsers:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/trackingdiagnostics:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/g4vertex:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/jetbase:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/globalvertex:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/phgenfit:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/rawbcolumi:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/eicsmear:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/mvtxcalib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/tpclinelaserdiode:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/hepmcjettrigger:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/core:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/calo_cdb:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/mvtxclustershapesqa:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/include/calopacketskimmer:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/include:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/rootmacros:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/include
+GSEARCHPATH=.:PG:LUSTRE:RAWDATA
+PWD=/gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking
+LOGNAME=samfred
+_CONDOR_JOB_AD=/home/condor/local/sphnx/execute/dir_2441353/.job.ad
+MANPATH=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/share/man:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/binutils/2.40-acaab/x86_64-el9/share/man:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/share/man:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/utils/share/man:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/share/man:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/man:/usr/local/share/man:/usr/share/man
+PYTHIA8=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/share/Pythia8
+G4INCLDATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/G4INCL1.0
+ORIG_PATH=/usr/local/bin:/usr/bin
+CXX=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/bin/g++
+G4LEDATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/G4EMLOW7.13
+PYTHON_CPU_COUNT=1
+OPENBLAS_NUM_THREADS=1
+_CONDOR_BIN=/usr/bin
+HOME=/sphenix/u/samfred
+G4PARTICLEXSDATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/G4PARTICLEXS3.1.1
+ONLINE_MAIN=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10
+CALIBRATIONROOT=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/share/calibrations
+TMPDIR=/tmp
+_CONDOR_SCRATCH_DIR=/home/condor/local/sphnx/execute/dir_2441353
+PGUSER=phnxrc
+NOPAYLOADCLIENT_CONF=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/etc/sPHENIX_newcdb.json
+XERCESCROOT=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04
+LHAPATH=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/lhapdf-5.9.1/share/lhapdf/PDFsets
+G4NEUTRONHPDATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/G4NDL4.6
+PYTHONPATH=.:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/lib/python3.13/site-packages:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/lib/python3.13/site-packages:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/lib
+USER=samfred
+_CONDOR_JOB_PIDS=
+TEMP=/tmp
+GOMAXPROCS=1
+OFFLINE_MAIN=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10
+SHLVL=1
+TF_NUM_THREADS=1
+G4SAIDXSDATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/G4SAIDDATA2.0
+APPTAINER_CACHEDIR=/home/condor/local/sphnx/execute/dir_2441353
+ROOTSYS=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06
+BATCH_SYSTEM=HTCondor
+_CONDOR_ANCESTOR_2441353=2443708:1759352722:1821886935
+_CONDOR_SLOT=slot1_41
+LD_LIBRARY_PATH=/sphenix/user/samfred/run25/install//lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/lib64:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/binutils/2.40-acaab/x86_64-el9/lib:.:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/lib64:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/utils/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/lib:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/lib64:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/lhapdf-5.9.1/lib:/usr/local/lib64:/usr/lib64
+OPT_SPHENIX=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core
+TF_LOOP_PARALLEL_ITERATIONS=1
+_CONDOR_ANCESTOR_317699=2441353:1759352722:2446911812
+EVT_LIB=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/lib
+PGHOST=sphnxdbmaster.sdcc.bnl.gov
+OMP_NUM_THREADS=1
+G4REALSURFACEDATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/RealSurface2.2
+FC=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/bin/gfortran
+G4ABLADATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/G4ABLA3.1
+PARASOFT=doesnotexist
+TMP=/tmp
+OPT_UTILS=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/utils
+CONFIG_SITE=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/etc/config.site
+PATH=/sphenix/user/samfred/run25/install//bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/binutils/2.40-acaab/x86_64-el9/bin:.:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/utils/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/root-6.32.06/bin:/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+G4LEVELGAMMADATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/PhotonEvaporation5.7
+CC=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/gcc/14.2.0-2f0a0/x86_64-el9/bin/gcc
+G4RADIOACTIVEDATA=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/geant4.10.07.p04/share/Geant4-10.7.4/data/RadioactiveDecay5.6
+JULIA_NUM_THREADS=1
+MKL_NUM_THREADS=1
+LHAPDF_DATA_PATH=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/share/LHAPDF
+XPLOAD_CONFIG_DIR=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/opt/sphenix/core/etc
+OLDPWD=/cvmfs/sphenix.sdcc.bnl.gov/alma9.2-gcc-14.2.0/release/release_new/new.10/geant4
+_=/usr/bin/printenv
+runnumber...
+51606
+trigger...
+
+   ------------------------------------------------------------------
+  | Welcome to ROOT 6.32.06                        https://root.cern |
+  | (c) 1995-2024, The ROOT Team; conception: R. Brun, F. Rademakers |
+  | Built for linuxx8664gcc on Dec 13 2024, 17:23:48                 |
+  | From tags/6-32-06@6-32-06                                        |
+  | With g++ (GCC) 14.2.0                                            |
+  | Try '.help'/'.?', '.demo', '.license', '.credits', '.quit'/'.q'  |
+   ------------------------------------------------------------------
+
+
+Processing data_histmaker.C(51606)...
+entry 0/203033 (0%)
+entry 1000/203033 (0.492531%)
+entry 2000/203033 (0.985062%)
+entry 4000/203033 (1.97012%)
+entry 5000/203033 (2.46265%)
+entry 6000/203033 (2.95518%)
+entry 8000/203033 (3.94025%)
+entry 9000/203033 (4.43278%)
+entry 10000/203033 (4.92531%)
+entry 11000/203033 (5.41784%)
+entry 13000/203033 (6.4029%)
+entry 15000/203033 (7.38796%)
+entry 18000/203033 (8.86555%)
+entry 19000/203033 (9.35808%)
+entry 20000/203033 (9.85062%)
+entry 21000/203033 (10.3431%)
+entry 22000/203033 (10.8357%)
+entry 23000/203033 (11.3282%)
+entry 24000/203033 (11.8207%)
+entry 27000/203033 (13.2983%)
+entry 29000/203033 (14.2834%)
+entry 30000/203033 (14.7759%)
+entry 31000/203033 (15.2685%)
+entry 32000/203033 (15.761%)
+entry 34000/203033 (16.746%)
+entry 35000/203033 (17.2386%)
+entry 36000/203033 (17.7311%)
+entry 37000/203033 (18.2236%)
+entry 38000/203033 (18.7162%)
+entry 41000/203033 (20.1938%)
+entry 42000/203033 (20.6863%)
+entry 44000/203033 (21.6714%)
+entry 46000/203033 (22.6564%)
+entry 48000/203033 (23.6415%)
+entry 49000/203033 (24.134%)
+entry 50000/203033 (24.6265%)
+entry 51000/203033 (25.1191%)
+entry 52000/203033 (25.6116%)
+entry 53000/203033 (26.1041%)
+entry 54000/203033 (26.5967%)
+entry 55000/203033 (27.0892%)
+entry 56000/203033 (27.5817%)
+entry 57000/203033 (28.0743%)
+entry 58000/203033 (28.5668%)
+entry 59000/203033 (29.0593%)
+entry 61000/203033 (30.0444%)
+entry 62000/203033 (30.5369%)
+entry 63000/203033 (31.0294%)
+entry 65000/203033 (32.0145%)
+entry 67000/203033 (32.9996%)
+entry 68000/203033 (33.4921%)
+entry 69000/203033 (33.9846%)
+entry 70000/203033 (34.4772%)
+entry 72000/203033 (35.4622%)
+entry 73000/203033 (35.9547%)
+entry 74000/203033 (36.4473%)
+entry 75000/203033 (36.9398%)
+entry 76000/203033 (37.4323%)
+entry 77000/203033 (37.9249%)
+entry 79000/203033 (38.9099%)
+entry 80000/203033 (39.4025%)
+entry 81000/203033 (39.895%)
+entry 82000/203033 (40.3875%)
+entry 83000/203033 (40.8801%)
+entry 84000/203033 (41.3726%)
+entry 87000/203033 (42.8502%)
+entry 88000/203033 (43.3427%)
+entry 89000/203033 (43.8352%)
+entry 92000/203033 (45.3128%)
+entry 94000/203033 (46.2979%)
+entry 95000/203033 (46.7904%)
+entry 96000/203033 (47.283%)
+entry 98000/203033 (48.268%)
+entry 100000/203033 (49.2531%)
+entry 101000/203033 (49.7456%)
+entry 102000/203033 (50.2381%)
+entry 103000/203033 (50.7307%)
+entry 104000/203033 (51.2232%)
+entry 105000/203033 (51.7157%)
+entry 106000/203033 (52.2083%)
+entry 107000/203033 (52.7008%)
+entry 108000/203033 (53.1933%)
+entry 109000/203033 (53.6859%)
+entry 110000/203033 (54.1784%)
+entry 112000/203033 (55.1634%)
+entry 113000/203033 (55.656%)
+entry 115000/203033 (56.641%)
+entry 116000/203033 (57.1336%)
+entry 117000/203033 (57.6261%)
+entry 118000/203033 (58.1186%)
+entry 119000/203033 (58.6112%)
+entry 120000/203033 (59.1037%)
+entry 122000/203033 (60.0888%)
+entry 123000/203033 (60.5813%)
+entry 126000/203033 (62.0589%)
+entry 127000/203033 (62.5514%)
+entry 128000/203033 (63.0439%)
+entry 130000/203033 (64.029%)
+entry 131000/203033 (64.5215%)
+entry 133000/203033 (65.5066%)
+entry 134000/203033 (65.9991%)
+entry 136000/203033 (66.9842%)
+entry 138000/203033 (67.9692%)
+entry 139000/203033 (68.4618%)
+entry 140000/203033 (68.9543%)
+entry 141000/203033 (69.4468%)
+entry 144000/203033 (70.9244%)
+entry 145000/203033 (71.417%)
+entry 146000/203033 (71.9095%)
+entry 147000/203033 (72.402%)
+entry 148000/203033 (72.8946%)
+entry 149000/203033 (73.3871%)
+entry 150000/203033 (73.8796%)
+entry 151000/203033 (74.3721%)
+entry 152000/203033 (74.8647%)
+entry 153000/203033 (75.3572%)
+entry 154000/203033 (75.8497%)
+entry 155000/203033 (76.3423%)
+entry 156000/203033 (76.8348%)
+entry 157000/203033 (77.3273%)
+entry 158000/203033 (77.8199%)
+entry 159000/203033 (78.3124%)
+entry 161000/203033 (79.2975%)
+entry 162000/203033 (79.79%)
+entry 163000/203033 (80.2825%)
+entry 164000/203033 (80.775%)
+entry 166000/203033 (81.7601%)
+entry 168000/203033 (82.7452%)
+entry 169000/203033 (83.2377%)
+entry 170000/203033 (83.7302%)
+entry 171000/203033 (84.2228%)
+entry 173000/203033 (85.2078%)
+entry 174000/203033 (85.7004%)
+entry 175000/203033 (86.1929%)
+entry 178000/203033 (87.6705%)
+entry 179000/203033 (88.163%)
+entry 181000/203033 (89.1481%)
+entry 182000/203033 (89.6406%)
+entry 183000/203033 (90.1331%)
+entry 184000/203033 (90.6257%)
+entry 186000/203033 (91.6107%)
+entry 187000/203033 (92.1033%)
+entry 188000/203033 (92.5958%)
+entry 189000/203033 (93.0883%)
+entry 193000/203033 (95.0584%)
+entry 194000/203033 (95.551%)
+entry 195000/203033 (96.0435%)
+entry 196000/203033 (96.536%)
+entry 197000/203033 (97.0286%)
+entry 198000/203033 (97.5211%)
+entry 203000/203033 (99.9837%)
+all done
+script done

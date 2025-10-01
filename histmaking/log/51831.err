@@ -1,0 +1,89 @@
+In file included from input_line_8:1:
+In file included from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/data_histmaker.C:2:
+In file included from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/ana.cxx:2:
+In file included from /gpfs/mnt/gpfs02/sphenix/user/samfred/run25/ppg11/histmaking/ana.h:10:
+/sphenix/user/jpark4/Utility/Style_jaebeom.h:321:3: warning: expression result unused [-Wunused-value]
+  TH1::SetDefaultSumw2;
+  ^~~~~~~~~~~~~~~~~~~~
+/sphenix/user/jpark4/Utility/Style_jaebeom.h:334:3: warning: expression result unused [-Wunused-value]
+  TH1::SetDefaultSumw2;
+  ^~~~~~~~~~~~~~~~~~~~
+/sphenix/user/jpark4/Utility/Style_jaebeom.h:348:3: warning: expression result unused [-Wunused-value]
+  TH1::SetDefaultSumw2;
+  ^~~~~~~~~~~~~~~~~~~~
+Error in <TFile::TFile>: file /sphenix/tg/tg01/jets/samfred/run25/ppg11ana_hadded/run51831.root does not exist
+ERROR!! TTree does not exist....
+
+ *** Break *** segmentation violation
+
+
+
+===========================================================
+There was a crash.
+This is the entire stack trace of all threads:
+===========================================================
+#0  0x000014d5418d8efa in wait4 () from /usr/lib64/libc.so.6
+#1  0x000014d54184b7e3 in do_system () from /usr/lib64/libc.so.6
+#2  0x000014d5422fc4ea in TUnixSystem::Exec (this=0x2418320, shellcmd=<optimized out>) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/core/unix/src/TUnixSystem.cxx:2157
+#3  TUnixSystem::StackTrace (this=0x2418320) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/core/unix/src/TUnixSystem.cxx:2448
+#4  0x000014d5422fbe34 in TUnixSystem::DispatchSignals (this=0x2418320, sig=kSigSegmentationViolation) at /sphenix/user/phnxbld/workarea/sPHENIX_SL7.3/almalinux-9.2/gcc-14.2.0/root-6.32.06/root-6.32.06/core/unix/src/TUnixSystem.cxx:3668
+#5  <signal handler called>
+#6  0x000014d541bac0da in ?? ()
+#7  0x0000000000000800 in ?? ()
+#8  0x000014d541e91a38 in ?? ()
+#9  0x3f59999a3f19999a in ?? ()
+#10 0x000000073d4ccccd in ?? ()
+#11 0x4044000000000000 in ?? ()
+#12 0x3ff0000000000000 in ?? ()
+#13 0x403e000000000000 in ?? ()
+#14 0x4057400000000000 in ?? ()
+#15 0x3ff0000000000000 in ?? ()
+#16 0x3fa999999999999a in ?? ()
+#17 0x3fe999999999999a in ?? ()
+#18 0x3fc147ae147ae148 in ?? ()
+#19 0x3fe199999999999a in ?? ()
+#20 0x3fa999999999999a in ?? ()
+#21 0x3fc999999999999a in ?? ()
+#22 0x3fd999999999999a in ?? ()
+#23 0x3fe6666666666666 in ?? ()
+#24 0x0000000005727801 in ?? ()
+#25 0x00000000056cb710 in ?? ()
+#26 0x0000000000000000 in ?? ()
+===========================================================
+
+
+The lines below might hint at the cause of the crash. If you see question
+marks as part of the stack trace, try to recompile with debugging information
+enabled and export CLING_DEBUG=1 environment variable before running.
+You may get help by asking at the ROOT forum https://root.cern/forum
+preferably using the command (.forum bug) in the ROOT prompt.
+Only if you are really convinced it is a bug in ROOT then please submit a
+report at https://root.cern/bugs or (preferably) using the command (.gh bug) in
+the ROOT prompt. Please post the ENTIRE stack trace
+from above as an attachment in addition to anything else
+that might help us fixing this issue.
+===========================================================
+#6  0x000014d541bac0da in ?? ()
+#7  0x0000000000000800 in ?? ()
+#8  0x000014d541e91a38 in ?? ()
+#9  0x3f59999a3f19999a in ?? ()
+#10 0x000000073d4ccccd in ?? ()
+#11 0x4044000000000000 in ?? ()
+#12 0x3ff0000000000000 in ?? ()
+#13 0x403e000000000000 in ?? ()
+#14 0x4057400000000000 in ?? ()
+#15 0x3ff0000000000000 in ?? ()
+#16 0x3fa999999999999a in ?? ()
+#17 0x3fe999999999999a in ?? ()
+#18 0x3fc147ae147ae148 in ?? ()
+#19 0x3fe199999999999a in ?? ()
+#20 0x3fa999999999999a in ?? ()
+#21 0x3fc999999999999a in ?? ()
+#22 0x3fd999999999999a in ?? ()
+#23 0x3fe6666666666666 in ?? ()
+#24 0x0000000005727801 in ?? ()
+#25 0x00000000056cb710 in ?? ()
+#26 0x0000000000000000 in ?? ()
+===========================================================
+
+

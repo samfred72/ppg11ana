@@ -73,12 +73,14 @@ void alphafitmass(const char * particle = "pi0", const char * sample = "MC", con
 
   float ptbins[4] = {2,2.5,3,20};
   float abins[4] = {0,0.08,0.2,1};
+  int smears = 5;
+  if (strcmp(sample,"data") == 0) smears = 1;
   for (int pt = 0; pt < 3; pt++) { 
     for (int alph = 0; alph < 3; alph++) {
-      for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-          for (int k = 0; k < 5; k++) {
-            for (int l = 0; l < 5; l++) {
+      for (int i = 0; i < smears; i++) {
+        for (int j = 0; j < smears; j++) {
+          for (int k = 0; k < smears; k++) {
+            for (int l = 0; l < smears; l++) {
               float plotlow =      0.07;//map_plotlow     [textmap[particle]][textmap[sample]][textmap[trigger]][2];
               float plothigh =     map_plothigh    [textmap[particle]][textmap[sample]][textmap[trigger]][2];
               float initialmean =  .13;//map_initialmean =1.3;//[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
@@ -95,9 +97,11 @@ void alphafitmass(const char * particle = "pi0", const char * sample = "MC", con
               else if (strcmp(sample,"MC") == 0) inf = TFile::Open(Form("hists/mass_%s_%s.root",sample,trigger),"READ");
               TH1D * h;
               if (strcmp(sample,"data") == 0) h = shorthist((TH1D*)inf->Get(Form("halpha%i_%i",pt,alph)),plotlow,plothigh);
-              else if (strcmp(sample,"MC") == 0) h = shorthist((TH1D*)inf->Get(Form("halpha%i_%i",pt,alph)),plotlow,plothigh);
+              else if (strcmp(sample,"MC") == 0) h = shorthist((TH1D*)inf->Get(Form("hmass_%s_pt%i_a%i_%i_%i_%i_%i",particle,pt,alph,i,j,k,l)),plotlow,plothigh);
 
-              TFile * wf = new TFile(Form("truthfits_smeartest/workspace_pt%i_a%i_%i_%i_%i_%i.root",pt,alph,i,j,k,l),"RECREATE"); 
+              const char * wfilename = Form("truthfits_smeartest/workspace_pt%i_a%i_%i_%i_%i_%i.root",pt,alph,i,j,k,l);
+              if (strcmp(sample,"data") == 0) wfilename = Form("datafits_smeartest/workspace_pt%i_a%i.root",pt,alph);
+              TFile * wf = new TFile(wfilename,"RECREATE"); 
               RooWorkspace * ws;
               for (int trial = 0; trial < 3; trial++) {
                 cout << "attempting trial: " << trial << endl;

@@ -301,7 +301,7 @@ void CompCrossData(std::string particle="pi0",bool smear = 0)
   grphenix->GetYaxis()->SetLabelSize(0.05);
   grphenix->Draw("APE");
   gr->Draw("PE same");
-  grtruth->Draw("PE same");
+  //grtruth->Draw("PE same");
   fitc->Draw("same");
   
   drawText("#bf{#it{sPHENIX}} Internal",sPHENIX_posx-0.03,sPHENIX_posy,1,22);
@@ -314,7 +314,7 @@ void CompCrossData(std::string particle="pi0",bool smear = 0)
   else l->SetHeader("#bf{#eta}");
   l->AddEntry(gr,"sPHENIX |y|<1","pe");
   l->AddEntry(grphenix,"PHENIX |y|<0.35","pe");
-  l->AddEntry(grtruth,"Pythia8 |y|<1","pe");
+  //l->AddEntry(grtruth,"Pythia8 |y|<1","pe");
   l->AddEntry(fitc,"Fit to PHENIX","l");
 
   l->Draw("same");

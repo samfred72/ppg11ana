@@ -17,7 +17,7 @@ TRIGGER=$2
 source /opt/sphenix/core/bin/sphenix_setup.sh -n new
 source /opt/sphenix/core/bin/setup_local.sh /sphenix/user/samfred/run25/install/
 
-printenv 
+#printenv 
 
 echo "runnumber..."
 echo ${SECTION}

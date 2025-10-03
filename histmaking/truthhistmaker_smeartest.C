@@ -6,6 +6,7 @@ void truthhistmaker_smeartest(int section = 0, const char * type = "MB")
 {
   //gSystem->Load("../Headers/libMyDict.so");
 
+  ana anaclone;
   int runnum = 28; 
   const char *dir = Form("/sphenix/tg/tg01/jets/samfred/run25/pythia_%s_hadded",type);
   string filename = (section == -1) ? Form("%s/run%i_%s.root",dir,runnum,type) : Form("%s/run%i_%i.root",dir,runnum,section);
@@ -14,10 +15,10 @@ void truthhistmaker_smeartest(int section = 0, const char * type = "MB")
   bool doprob = false;
   bool dosmear = true;
   // Scales for MC smearing
-  float pfrac = 0.001; float pfrac_high = 0.002; float pfrac_low = 0;
-  float efrac = 0.1; float efrac_high = 0.2; float efrac_low = 0;
-  float econst = 0.1; float econst_high = 0.2; float econst_low = 0;
-  float escale = 1.03; float escale_high = 1.06; float escale_low = 0.96;
+  float pfrac = 0.001; float pfrac_high = anaclone.pfrac_high;  float pfrac_low = anaclone.pfrac_low;
+  float efrac = 0.1; float efrac_high =   anaclone.efrac_high;  float efrac_low = anaclone.efrac_low;
+  float econst = 0.1; float econst_high = anaclone.econst_high; float econst_low =anaclone.econst_low;
+  float escale = 1.03; float escale_high =anaclone.escale_high; float escale_low =anaclone.escale_low;
 
   TFile *f = new TFile(Form("%s",filename.c_str()),"read");
   TTree *t = (TTree*) f->Get("towerntup");
@@ -27,7 +28,6 @@ void truthhistmaker_smeartest(int section = 0, const char * type = "MB")
   const double masslow = 0.0;
   const double masshigh = 1;
 
-  ana anaclone;
   const int nPtBins = 3;//anaclone.nPtBins;
   const int nAlphaBins = 3;//anaclone.nAlphaBins;
   double pi0mass = anaclone.pi0mass;
@@ -51,6 +51,7 @@ void truthhistmaker_smeartest(int section = 0, const char * type = "MB")
       }
     }
   }
+
   TRandom rndm;
   Long64_t nentries = t->GetEntriesFast();
   for (Long64_t jentry=0; jentry<nentries;jentry++) {
@@ -69,8 +70,8 @@ void truthhistmaker_smeartest(int section = 0, const char * type = "MB")
       float pt1 = pho1->Pt();
       float pt2 = pho2->Pt();
 
-      float etamin = anaclone.GetShiftedEta(vz,-0.3);
-      float etamax = anaclone.GetShiftedEta(vz,0.3);
+      float etamin = anaclone.GetShiftedEta(vz,-1);
+      float etamax = anaclone.GetShiftedEta(vz,1);
       
       float eta1 = pho1->Eta();
       float eta2 = pho2->Eta();
@@ -112,7 +113,7 @@ void truthhistmaker_smeartest(int section = 0, const char * type = "MB")
 
               pt = phofl.Pt();
 
-              int bin;
+              int bin;// = (int) pt;
               if (pt < 2.5) bin = 0;
               else if (pt >= 2.5 && pt < 3.5) bin = 1;
               else if (pt >= 3.5) bin = 2;
@@ -121,7 +122,6 @@ void truthhistmaker_smeartest(int section = 0, const char * type = "MB")
               if (energyimbal < 0.08) abin = 0;
               else if (energyimbal >= 0.08 && energyimbal < 0.2) abin = 1;
               else if (energyimbal >= 0.2) abin = 2;
-              
 
               float mass = phofl.M(); 
 

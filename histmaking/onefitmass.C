@@ -140,7 +140,9 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
   RooDataHist data("binnedData", "Binned dataset", RooArgSet(*(ws->var("mass"))), h);
   RooPlot * plot;
 
-  for (int trial = 0; trial < 3; trial++) {
+  int ntrials = 1;
+  if (strcmp(particle,"pi0")==0) ntrials = 3;
+  for (int trial = 0; trial < ntrials; trial++) {
     numFitPar = 0;
     ndf = 0;
     chisq = 0;
@@ -151,8 +153,8 @@ void onefitmass(const char * particle = "pi0", const char * sample = "MC", const
 
     
     // Gaussian/double gaussian
-    RooRealVar mu("mean", "mean of gaussian",initialmean,initialmean-0.05,initialmean+0.05);
-    RooRealVar sigma1("sigma1", "width of gaussian", initialsigma, 0.005, 0.1); 
+    RooRealVar mu("mean", "mean of gaussian",initialmean,initialmean-0.1,initialmean+0.1);
+    RooRealVar sigma1("sigma1", "width of gaussian", initialsigma, 0.005, 0.15); 
     RooRealVar sigma2("sigma2", "width of gaussian", initialsigma*1.1, 0.001, 0.2);
     RooGaussian * signal1 = new RooGaussian("signal1", "gaussian PDF", *(ws->var("mass")), mu, sigma1);
     RooGaussian * signal2 = new RooGaussian("signal2", "gaussian PDF", *(ws->var("mass")), mu, sigma2);

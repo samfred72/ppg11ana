@@ -1,6 +1,7 @@
 #include "commonUtility.h"
 #include "Style_jaebeom.h"
 #include "onefitmass.h"
+#include "ana.cxx"
 #include <map>
 
 using namespace RooFit;
@@ -61,10 +62,11 @@ TH1D * shorthist(TH1D * hist, float low, float high) {
 void fitmass_smeartest(const char * particle = "pi0", const char * sample = "MC", const char * trigger = "MB") {
   set_maps();
 
-  TFile * inf = TFile::Open(Form("mass_smeartest.root"),"READ");
-  TCanvas * c = new TCanvas("c","",600,800);
+  ana anaclone;
+  TFile * inf = TFile::Open(Form("hists/mass_MC_MB.root"),"READ");
+  //TCanvas * c = new TCanvas("c","",600,800);
   gStyle->SetOptStat(0);
-  c->SaveAs("smearfits.pdf[");
+  //c->SaveAs("smearfits.pdf[");
   map<string,int> textmap = {
     {"pi0",0},{"eta",1},
     {"data",0},{"MC",1},
@@ -73,17 +75,17 @@ void fitmass_smeartest(const char * particle = "pi0", const char * sample = "MC"
   };
 
   cout << "getting data" << endl;
-  float datapeaks[3] = {0,0,0};
-  float datawidths[3] = {0,0,0};
-  /*
-  for (int i = 0; i < 3; i++) {
+  float datapeaks[5] = {0,0,0};
+  float datawidths[5] = {0,0,0};
+  
+  for (int i = 0; i < 5; i++) {
     TFile * f;
     RooWorkspace *w;
     RooFitResult *fitRes;
     RooRealVar *mean;
     RooRealVar *sigma;
     RooFormulaVar *ratio;
-    const char * filename = Form("/sphenix/user/samfred/run25/ppg11/histmaking/sufficient_without_prob_1GeV/workspace_fits_data_%s_pt%i_mbd.root",particle,i);
+    const char * filename = Form("/sphenix/user/samfred/run25/ppg11/histmaking/sufficient_without_prob_1GeV/workspace_fits_data_%s_pt%i_mbd.root",particle,i+2);
     if (!gSystem->AccessPathName(filename)) {
       f = TFile::Open(filename,"READ");
       w = (RooWorkspace*) f->Get("workspace");
@@ -95,34 +97,33 @@ void fitmass_smeartest(const char * particle = "pi0", const char * sample = "MC"
     delete f;
   }
 
-  */
+  
   cout << "doing fits" << endl;
-  float fitpeaks[3][3][5][5][5][5];
-  float fitwidths[3][3][5][5][5][5];
-  float fitchisq[3][3][5][5][5][5];
-  for (int pt = 0; pt < 3; pt++) { 
-    float plotlow =      map_plotlow     [textmap[particle]][textmap[sample]][textmap[trigger]][2];
-    float plothigh =     map_plothigh    [textmap[particle]][textmap[sample]][textmap[trigger]][2];
-    float initialmean =  0.135;//map_initialmean [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+  float fitpeaks[5][1][5][5][5][5];
+  float fitwidths[5][1][5][5][5][5];
+  float fitchisq[5][1][5][5][5][5];
+  for (int pt = 0; pt < 5; pt++) { 
+    float plotlow =      map_plotlow     [textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
+    float plothigh =     map_plothigh    [textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
+    float initialmean =  0.13;//map_initialmean [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
     float initialsigma = 0.05;//map_initialsigma[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
-    float Alow =         map_Alow        [textmap[particle]][textmap[sample]][textmap[trigger]][2];
-    float Ahigh =        map_Ahigh       [textmap[particle]][textmap[sample]][textmap[trigger]][2];
-    float Astart =       map_Astart      [textmap[particle]][textmap[sample]][textmap[trigger]][2];
-    float Blow =         map_Blow        [textmap[particle]][textmap[sample]][textmap[trigger]][2];
-    float Bhigh =        map_Bhigh       [textmap[particle]][textmap[sample]][textmap[trigger]][2];
-    float Bstart =       map_Bstart      [textmap[particle]][textmap[sample]][textmap[trigger]][2];
-    for (int a = 0; a < 3; a++) {
+    float Alow =         map_Alow        [textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
+    float Ahigh =        map_Ahigh       [textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
+    float Astart =       map_Astart      [textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
+    float Blow =         map_Blow        [textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
+    float Bhigh =        map_Bhigh       [textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
+    float Bstart =       map_Bstart      [textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
+    for (int a = 0; a < 1; a++) {
       for (int i = 0; i < 5; i++) {
         for (int j = 0; j < 5; j++) {
           for (int k = 0; k < 5; k++) {
             for (int l = 0; l < 5; l++) {
-              TFile * wf = TFile::Open(Form("truthfits_smeartest/workspace_pt%i_a%i_%i_%i_%i_%i.root",pt,a,i,j,k,l),"RECREATE");
-              initialmean =  map_initialmean [textmap[particle]][textmap[sample]][textmap[trigger]][pt];
-              initialsigma = map_initialsigma[textmap[particle]][textmap[sample]][textmap[trigger]][pt];
+              initialmean =  0.13;//map_initialmean [textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
+              initialsigma = 0.05;//map_initialsigma[textmap[particle]][textmap[sample]][textmap[trigger]][pt+2];
               for (int trial = 0; trial < 3; trial++) {
-                if (trial > 0 ) { initialmean *= 1.03;  initialsigma *= 0.5; }
+                if (trial > 0 ) { initialmean *= 1.04;  initialsigma *= 0.5; }
                 cout << "Fitting " << pt << " " << a << " " << i << " " << j << " " << k << " " << l << endl;
-                TH1D * h = shorthist((TH1D*)inf->Get(Form("hmass_%s_pt%i_a%i_%i_%i_%i_%i",particle,pt,a,i,j,k,l)),plotlow,plothigh);
+                TH1D * h = shorthist((TH1D*)inf->Get(Form("hmass_%s_pt%i_a%i_%i_%i_%i_%i",particle,pt+2,a,i,j,k,l)),plotlow,plothigh);
 
                 int binlow = h->FindBin(plotlow);
                 int binhigh = h->FindBin(plothigh);
@@ -216,13 +217,13 @@ void fitmass_smeartest(const char * particle = "pi0", const char * sample = "MC"
                 ws->pdf("model")->plotOn(plot,Name("Sig"),Components(RooArgSet(*sig)),LineColor(kGreen+2),LineWidth(2),LineStyle(kSolid),FillStyle(3001),FillColor(kGreen+1),DrawOption("LF"));
                 ws->pdf("model")->plotOn(plot,Name("Bkg"),Components(RooArgSet(*bkg)),LineColor(kBlue+2),LineStyle(kDashed),LineWidth(2));
 
-                TPad * pplot = new TPad("pplot","",0,0,1,1);
-                pplot->SetBottomMargin(0.13);
-                pplot->SetRightMargin(0.02);
-                pplot->SetLeftMargin(0.18);
-                pplot->SetTopMargin(0.02);
-                pplot->cd();
-                gPad->SetTicks(1,1);
+                //TPad * pplot = new TPad("pplot","",0,0,1,1);
+                //pplot->SetBottomMargin(0.13);
+                //pplot->SetRightMargin(0.02);
+                //pplot->SetLeftMargin(0.18);
+                //pplot->SetTopMargin(0.02);
+                //pplot->cd();
+                //gPad->SetTicks(1,1);
 
                 double maxYValueFit = 0;
 
@@ -254,17 +255,17 @@ void fitmass_smeartest(const char * particle = "pi0", const char * sample = "MC"
                 plot->GetXaxis()->SetTitleSize(0.048) ;
                 plot->GetXaxis()->SetLabelSize(0.04) ;
                 plot->GetXaxis()->CenterTitle();
-                plot->Draw();
-                drawText("#bf{#it{sPHENIX}} Internal",0.55,0.81,1,22);
+                //plot->Draw();
+                //drawText("#bf{#it{sPHENIX}} Internal",0.55,0.81,1,22);
                 const char * runtext;
                 if (strcmp(sample,"data") == 0) runtext = Form("Run 47289-53879 %s",trigger);
                 else if (strcmp(sample,"MC") == 0) runtext = Form("MC Pythia run 28 %s",trigger);
-                drawText(runtext,0.55,0.74,1,22);
-                drawText(Form("%i GeV < p_{T,#gamma#gamma} < %i GeV",pt,pt+1),0.6,0.68,1,16);
-                drawText("|vz| < 30 cm",0.6,0.63,1,16);
-                drawText("|#eta| < 1",0.6,0.58,1,16);
-                drawText("p_{T,#gamma} > 1 GeV",0.6,0.53,1,16);
-                drawText("#alpha < 0.6",0.6,0.48,1,16);
+                //drawText(runtext,0.55,0.74,1,22);
+                //drawText(Form("%i GeV < p_{T,#gamma#gamma} < %i GeV",pt+2,pt+3),0.6,0.68,1,16);
+                //drawText("|vz| < 30 cm",0.6,0.63,1,16);
+                //drawText("|#eta| < 1",0.6,0.58,1,16);
+                //drawText("p_{T,#gamma} > 1 GeV",0.6,0.53,1,16);
+                //drawText("#alpha < 0.6",0.6,0.48,1,16);
 
                 const char * muname;
                 const char * stdname;
@@ -291,28 +292,28 @@ void fitmass_smeartest(const char * particle = "pi0", const char * sample = "MC"
                 }
                 int numFitPar = res->floatParsFinal().getSize();
                 int ndf = nFullBinsPull - numFitPar;
-                drawText(Form("Fit #chi^2/NDF = %.2f",chisq/ndf),0.2,0.68,1,16);
-                drawText(Form("#mu = %.4f#pm%.4f",mean,meanerr),0.2,0.63,1,16);
-                drawText(Form("#sigma = %.4f#pm%.4f",std,stderr),0.2,0.58,1,16);
-                drawText(Form("Yield: %.2f#pm%.2f",nsigyield,nsigyielderr),0.2,0.53,1,16);
-                drawText(bkg->GetTitle(),0.2,0.48,1,16);
-                c->cd();
-                pplot->Draw();
+                //drawText(Form("Fit #chi^2/NDF = %.2f",chisq/ndf),0.2,0.68,1,16);
+                //drawText(Form("#mu = %.4f#pm%.4f",mean,meanerr),0.2,0.63,1,16);
+                //drawText(Form("#sigma = %.4f#pm%.4f",std,stderr),0.2,0.58,1,16);
+                //drawText(Form("Yield: %.2f#pm%.2f",nsigyield,nsigyielderr),0.2,0.53,1,16);
+                //drawText(bkg->GetTitle(),0.2,0.48,1,16);
+                //c->cd();
+                //pplot->Draw();
 
 
-                if (chisq/ndf < 6 && chisq/ndf > 0.05) {
+                if ((chisq/ndf < 6 && chisq/ndf > 0.05) || trial == 2) {
                   cout << "success for " << pt << " " << a << " " << i << " " << j << " " << k << " " << l << endl;
                   fitpeaks[pt][a][i][j][k][l] = mean;
                   fitwidths[pt][a][i][j][k][l] = std;
                   fitchisq[pt][a][i][j][k][l] = chisq/ndf;
-                  c->SaveAs("smearfits.pdf");
+                  //c->SaveAs("smearfits.pdf");
                   ws->Write();
                   delete h;
                   delete plot;
                   delete signal1;
                   delete model;
                   delete res;
-                  delete pplot;
+                  //delete pplot;
                   delete line;
                   delete poly2;
                   delete poly3;
@@ -327,15 +328,13 @@ void fitmass_smeartest(const char * particle = "pi0", const char * sample = "MC"
                 delete signal1;
                 delete model;
                 delete res;
-                delete pplot;
+                //delete pplot;
                 delete line;
                 delete poly2;
                 delete poly3;
                 delete ws;
 
               }
-              wf->Close();
-              delete wf;
             }
           }
         }
@@ -343,37 +342,86 @@ void fitmass_smeartest(const char * particle = "pi0", const char * sample = "MC"
     }
   }
 
-  c->SaveAs("smearfits.pdf]");
+  //c->SaveAs("smearfits.pdf]");
 
   float bestratioscore = 100000000;
-  int bestratio = 0;
+  int bestratio = -1;
   TH1D * hchisq = new TH1D("hchisq",";chisq;counts",1000,-5,200);
-  for (int a = 0; a < 3; a++) {
+  for (int a = 0; a < 1; a++) {
     for (int i = 0; i < 5; i++) {
       for (int j = 0; j < 5; j++) {
         for (int k = 0; k < 5; k++) {
           for (int l = 0; l < 5; l++) {
             float ratiodiff = 0;
+            float peakdiff = 0;
+            float widthdiff = 0;
+            float diff = 0;
             int count = 0;
-            for (int pt = 0; pt < 3; pt++) {
+            for (int pt = 0; pt < 5; pt++) {
               float chisq = fitchisq[pt][a][i][j][k][l];
               hchisq->Fill(chisq);
-              if (chisq > 6 || chisq < 0.05) continue;
-              ratiodiff += TMath::Power(datawidths[pt]/datapeaks[pt]-fitwidths[pt][a][i][j][k][l]/fitpeaks[pt][a][i][j][k][l],2);
+              if (chisq > 8 || chisq == 0) continue;
+              cout << "pt: " << pt << " widths (data/fit): (" << datawidths[pt] << "/" << fitwidths[pt][a][i][j][k][l] << ") peaks (data/fit): " << datapeaks[pt] << "/" << fitpeaks[pt][a][i][j][k][l] << ")" << endl; 
+              ratiodiff += 0;//TMath::Power(datawidths[pt]/datapeaks[pt]-fitwidths[pt][a][i][j][k][l]/fitpeaks[pt][a][i][j][k][l],2)/(pt+1)/(pt+1);
+              peakdiff += TMath::Power(datapeaks[pt]-fitpeaks[pt][a][i][j][k][l],2)/(pt+1)/(pt+1);
+              widthdiff += 10*TMath::Power(datawidths[pt]-fitwidths[pt][a][i][j][k][l],2)/(pt+1)/(pt+1);
               count++; 
             }
-            if (count == 3) {
-              ratiodiff = TMath::Sqrt(ratiodiff/(count));
-              if (ratiodiff < bestratioscore) {
-                bestratioscore = ratiodiff;
+            if (count == 5) {
+              diff = ratiodiff+peakdiff+widthdiff;
+              diff = TMath::Sqrt(diff/(count));
+              if (diff < bestratioscore) {
+                bestratioscore = diff;
                 bestratio = 1000*i + 100*j + 10*k + l;
               }
             }
-          }}
+          }
+        }
       }
     }
   }
+  int besti = bestratio/1000;
+  int bestj = (bestratio%1000)/100;
+  int bestk = (bestratio%100)/10;
+  int bestl = (bestratio%10);
   cout << "bestratio: " << bestratio << " " << bestratioscore << endl;
+  cout << "pfrac: "  << besti/5.0*(anaclone.pfrac_high-anaclone.pfrac_low)+anaclone.pfrac_low << endl;
+  cout << "efrac: "  << bestj/5.0*(anaclone.efrac_high-anaclone.efrac_low)+anaclone.efrac_low << endl;
+  cout << "econst: " << bestk/5.0*(anaclone.econst_high-anaclone.econst_low)+anaclone.econst_low << endl;
+  cout << "escale: " << bestl/5.0*(anaclone.escale_high-anaclone.escale_low)+anaclone.escale_low << endl;
+
+
+  TGraph * grpeaksdata = new TGraph();
+  TGraph * grpeaksfit = new TGraph();
+  TGraph * grwidthsdata = new TGraph();
+  TGraph * grwidthsfit = new TGraph();
+  grpeaksdata->SetMarkerStyle(20);
+  grwidthsdata->SetMarkerStyle(20);
+  grpeaksfit->SetMarkerStyle(24);
+  grwidthsfit->SetMarkerStyle(24);
+
+  for (int i = 0; i < 5; i++) {
+    grpeaksdata->SetPoint(i,i+2,datapeaks[i]);
+    grwidthsdata->SetPoint(i,i+2,datawidths[i]);
+    grpeaksfit->SetPoint(i,i+2,fitpeaks[i][0][besti][bestj][bestk][bestl]);
+    grwidthsfit->SetPoint(i,i+2,fitwidths[i][0][besti][bestj][bestk][bestl]);
+  }
+
+  grpeaksdata->GetYaxis()->SetRangeUser(.11,.2);
+  grpeaksfit->GetYaxis()->SetRangeUser(.11,.2);
+  grwidthsdata->GetYaxis()->SetRangeUser(0,0.05);
+  grwidthsfit->GetYaxis()->SetRangeUser(0,0.05);
+  TCanvas * c1 = new TCanvas("c1","",700,700);
+  grpeaksdata->Draw("ap");
+  grpeaksfit->Draw("p same");
+
+  TCanvas * c2 = new TCanvas("c2","",700,700);
+  grwidthsdata->Draw("ap");
+  grwidthsfit->Draw("p same");
+
+
+
+
   TFile * hfile = TFile::Open("smeartestchisq.root","RECREATE");
   hchisq->Write();
 }

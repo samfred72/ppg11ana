@@ -56,6 +56,12 @@ class ana {
     static constexpr double alphaBins[nAlphaBins+1] = {0, 0.08, 0.2, 1};
     virtual Int_t findAlphaBin(double value);
 
+    static const int smearbins = 5;
+    float pfrac_high = 0.003; float pfrac_low = 0.001;
+    float efrac_high = 0.1; float efrac_low = 0.00;
+    float econst_high = 0.3; float econst_low = 0.1;
+    float escale_high = 1.00; float escale_low = 0.96;
+
   private:
     bool m_truth_found_decay{true};
 };

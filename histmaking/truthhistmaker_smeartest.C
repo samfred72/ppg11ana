@@ -70,8 +70,8 @@ void truthhistmaker_smeartest(int section = 0, const char * type = "MB")
       float pt1 = pho1->Pt();
       float pt2 = pho2->Pt();
 
-      float etamin = anaclone.GetShiftedEta(vz,-1);
-      float etamax = anaclone.GetShiftedEta(vz,1);
+      float etamin = anaclone.GetShiftedEta(vz,-0.3);
+      float etamax = anaclone.GetShiftedEta(vz,0.3);
       
       float eta1 = pho1->Eta();
       float eta2 = pho2->Eta();
